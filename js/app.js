@@ -199,7 +199,9 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.id = 'three-js-canvas';
-    document.body.appendChild(renderer.domElement);
+    // app
+    document.getElementsByClassName("app")[0].appendChild(renderer.domElement);
+    // document.body
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.set(0, 0, 800);
 
