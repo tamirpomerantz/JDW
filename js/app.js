@@ -22,15 +22,15 @@ var mouseRelations = []; // Arr to keep distance from mouse pointer.
 // Positions of rocks
 var PosArr = [
     [-222, 300, -10], // middle row, center
-    [-665, 103, 0], // middle row, left
-    [590, -503, -150], //middle row, far right
-    [200, -552, -40], // bottom row, center
-    [-40, 539, 100], // top row, middle
+    [-465, 103, 0], // middle row, left
+    [490, -303, -50], //middle row, far right
+    [200, -352, -40], // bottom row, center
+    [-40, 339, 0], // top row, middle
     [-506, 396, 30], // top row left
-    [-522, -409, -100], // bottom row, left
-    [186, 50, -40], //sec row - right
-    [623, -493, -40], //bottom row - right
-    [309, 480, 200] //top row - right
+    [-522, -409, -10], // bottom row, left
+    [186, 50, -50], //sec row - right
+    [623, -493, -50], //bottom row - right
+    [309, 480, 0] //top row - right
 ];
 // Creation of texture materials
 
@@ -224,7 +224,7 @@ function createMaterialsMobile() {
     return materials;
 }
 
-var BoxesNumber = 8;
+var BoxesNumber = 10;
 var boxArr = [];
 
 var meshArr = [];
@@ -252,8 +252,8 @@ function init() {
     // app
     document.getElementsByClassName("app")[0].appendChild(renderer.domElement);
     // document.body
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(0, 0, 800);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.set(0, 0, 1500);
 
     scene = new THREE.Scene();
     light = new THREE.DirectionalLight(0xffffff);
@@ -301,13 +301,13 @@ function init() {
 
 
 
-            if (j % 2) { // create box
+            if (j==1 || j==3 || j==5) { // create box
 
 
                 boxArr[j] = new THREE.BoxBufferGeometry(boxWidth, boxWidth, boxWidth * 2);
                 meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialBox(Math.floor(Math.random() * 3 )));
 
-            } else if (j % 3) { // create triangle cylincer
+            } else if (j % 5==0 || j==2 ) { // create triangle cylincer
                 tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight , 3);
                 tmpCylinder.materials = [TXTMaterial[j], TZAMaterialCyl];
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
@@ -404,8 +404,8 @@ function init() {
 
             new TWEEN.Tween(meshArr[j].position).to({
                     z: PosArr[j][2]
-                }, 1000 + Math.random() * 2000)
-                .easing(TWEEN.Easing.Circular.In).start();
+                }, 500 + Math.random() * 1000)
+                .easing(TWEEN.Easing.Circular.Out).start();
 
 
 
@@ -455,18 +455,18 @@ function onWindowResize() {
     screenWidth = window.innerWidth;
     screenHeight = window.innerHeight;
 
-    if (screenWidth > 1300) {
-        screenWidth = 1300;
-    }
     if (screenHeight > 700) {
         screenHeight = 700;
+    }
+        if (screenWidth > 2000) {
+        screenWidth = 2000;
     }
     let scaleFactor = 0.9 + (screenWidth / windowWidth) * 0.1;
     if (!isMobile) {
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
-            meshArr[i].positionAfterResize.x = meshArr[i].innitialposition.x * ((screenWidth / windowWidth) + 0.3);
-            meshArr[i].positionAfterResize.y = meshArr[i].innitialposition.y * ((screenHeight / windowHeight) - 0.2);
+            meshArr[i].positionAfterResize.x = meshArr[i].innitialposition.x*(screenWidth/1000);
+            meshArr[i].positionAfterResize.y = meshArr[i].innitialposition.y * ((screenHeight / 1400));
 
             meshArr[i].position.x = meshArr[i].positionAfterResize.x;
             meshArr[i].position.y = meshArr[i].positionAfterResize.y;
@@ -515,8 +515,8 @@ function onDocumentMouseMove(event) {
 
             let tmpObjPso = new THREE.Vector3();
             // tmpObjPso.setFromMatrixPosition( meshArr[0].matrixWorld );
-            tmpObjPso.x = meshArr[j].innitialposition.x;
-            tmpObjPso.y = meshArr[j].innitialposition.y;
+            tmpObjPso.x = meshArr[j].positionAfterResize.x;
+            tmpObjPso.y = meshArr[j].positionAfterResize.y;
             // tmpObjPso.z = 0;
 
             // mouseRelations[j] = MousePos.distanceTo(tmpObjPso); 
@@ -528,8 +528,8 @@ function onDocumentMouseMove(event) {
             // console.log();
             let Influence = Math.pow(Math.max(1-currdistance/500,0),3);
             // let infX = Math.max(1-currdistance/1000,0);
-            meshArr[j].position.x = meshArr[j].innitialposition.x + Influence * mouseRelations[j].y;     
-            meshArr[j].position.y = meshArr[j].innitialposition.y + Influence * mouseRelations[j].x;     
+            meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;     
+            meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;     
 
      // All follow mouse
     //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
@@ -547,7 +547,7 @@ function onDocumentMouseMove(event) {
 
 
 
-var rotationSpeed = 0.2;
+var rotationSpeed = 0.1;
 // var frameRate = 1 / 40; // Seconds  
 // var Cd = 0.47; // Dimensionless  
 // var rho = 1.22; // kg / m^3  
@@ -582,11 +582,11 @@ function animate() {
                 }
                 if (j % 2) {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
-                    // meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
+                    meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
 
                 } else {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
-                    // meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
+                    meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
                 }
 
                 let vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);

@@ -2,44 +2,65 @@
 <html ng-app="LunchMenus">
 
 <head>
-      <meta charset="utf-8">
-      <meta http-equiv="x-ua-compatible" content="ie=edge">
-      <title>Luncher</title>
-      <meta name="description" content="food">
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=no">
-      <link rel="shortcut icon" href="favicon.ico" />
-      <meta property="og:url" content="" />
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content="Luncher" />
-      <meta property="og:site_name" content="Luncher" />
-      <meta property="og:description" content="foo" />
-      <meta property="og:image" content="" />
-      <meta property="og:image:url" content="" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:type" content="image/png" />
-      <!--<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">-->
-      <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
-      <!--<link rel="stylesheet" type="text/css" href="css/main.css">-->
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>ThreeJS</title>
+    <meta name="description" content="food">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=no">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <meta property="og:url" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Luncher" />
+    <meta property="og:site_name" content="Luncher" />
+    <meta property="og:description" content="foo" />
+    <meta property="og:image" content="" />
+    <meta property="og:image:url" content="" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <!--<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">-->
+    <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
 
+    <!--<link rel="stylesheet" type="text/css" href="css/main.css">-->
+
+    <style>
+        body {
+            background: #E1EBFB;
+        }
+        
+        .app {
+            position: fixed;
+        }
+        
+        .border {
+            position: fixed;
+            border: 70px solid #fff;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            z-index:100;
+        }
+    </style>
 </head>
 
 <body id="top" ng-class="{'body--dialog-open':(selectedIndex.current != -1)}" ng-controller="index">
-
-<div class="app"></div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
-            <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>-->
-			<script src="js/tween.js"></script>
-			<script src="js/ThreeCSG.js"></script>
-			<script src="js/DeviceOrientationControls.js"></script>
-    
-			
-            <!--<script src="js/csg.js"></script>-->
+    <div class="border"></div>
+    <div class="app"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>-->
+    <script src="js/tween.js"></script>
+    <script src="js/ThreeCSG.js"></script>
+    <script src="js/DeviceOrientationControls.js"></script>
 
 
+    <!--<script src="js/csg.js"></script>-->
 
 
-            <script src="js/app.js"></script>
+
+
+    <script src="js/app.js"></script>
 </body>
 
 </html>
