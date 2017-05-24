@@ -36,31 +36,66 @@ var PosArr = [
 
 var txtArr = [
     'img/t2.jpg',
-    'img/t7.jpg',
-    'img/t6.jpg',
     'img/t4.jpg',
-    'img/check3.jpg',
-    'img/check2.jpg',
-    'img/check1.jpg'
+    'img/t6.jpg',
+    'img/t7.jpg',
+    'img/t8.jpg',
+    'img/t9.jpg', 
+    'img/t2.jpg',
+    'img/t4.jpg',
+    'img/t6.jpg',
+    'img/t7.jpg',
+    'img/t8.jpg',
+    'img/t9.jpg'
 ]
 
 var textureArr = [];
 
-for (let i = 1; i < txtArr.length; i++) {
-
+for (let i = 0; i < txtArr.length; i++) {
     textureArr[i] = THREE.ImageUtils.loadTexture(txtArr[i]);
     textureArr[i].wrapS = textureArr[i].wrapT = THREE.RepeatWrapping;
     textureArr[i].offset.set(0, 0);
 }
 
-
 var TXTMaterial = [];
-for (let i = 1; i < txtArr.length; i++) {
+
+for (let i = 0; i < txtArr.length; i++) {
     TXTMaterial[i] = new THREE.MeshBasicMaterial({
         map: textureArr[i],
         overdraw: true
     });
 }
+
+
+// Floating box textures
+
+var TXTBoxSideMaterial = [];
+var TXTBoxSQMaterial = [];
+var txtBoxSideArr = ['img/BOX-SIDE-01.jpg', 'img/BOX-SIDE-02.jpg', 'img/BOX-SIDE-03.jpg'];
+
+for (let i = 0; i < txtBoxSideArr.length; i++) {
+    // Box side
+    let textureBoxSideArr = THREE.ImageUtils.loadTexture(txtBoxSideArr[i]);
+    textureBoxSideArr.wrapS = textureBoxSideArr.wrapT = THREE.RepeatWrapping;
+    textureBoxSideArr.repeat.set(1, 0.666666);
+    textureBoxSideArr.offset.set(0, 0.33333);
+    TXTBoxSideMaterial[i] = new THREE.MeshBasicMaterial({
+        map: textureBoxSideArr,
+        overdraw: true
+    });
+    // Box square
+    let textureBoxSQ = THREE.ImageUtils.loadTexture(txtBoxSideArr[i]);
+    textureBoxSQ.wrapS = textureBoxSQ.wrapT = THREE.RepeatWrapping;
+    textureBoxSQ.repeat.set(1, 0.333);
+    textureBoxSQ.offset.set(0, 0);
+    TXTBoxSQMaterial[i] = new THREE.MeshBasicMaterial({
+        map: textureBoxSQ,
+        overdraw: true
+    });
+}
+
+console.log(TXTBoxSQMaterial);
+
 
 var TZATexture = new THREE.TextureLoader().load('img/check4.jpg');
 TZATexture.anisotropy = 4;
@@ -97,19 +132,34 @@ var TZAMaterialCyl = new THREE.MeshPhongMaterial({
 
 function createMaterials() {
 
-    var rndTXT = Math.floor((Math.random() * (6 - 1)) + 1);
+    var rndTXT = Math.floor((Math.random() * textureArr.length));
 
     var materials = [
         TZAMaterial,
         TZAMaterial,
         TZAMaterial,
-        TXTMaterial[Math.floor((Math.random() * (4 - 1)) + 1)],
-        TXTMaterial[Math.floor((Math.random() * (4 - 1)) + 1)],
-        TXTMaterial[Math.floor((Math.random() * (4 - 1)) + 1)]
+        TXTMaterial[Math.floor((Math.random() * textureArr.length))],
+        TXTMaterial[Math.floor((Math.random() * textureArr.length))],
+        TXTMaterial[Math.floor((Math.random() * textureArr.length))]
 
     ];
     return materials;
 }
+
+
+function createMaterialBox(j) {
+    console.log('j:' + j);
+    var materials = [
+        TZAMaterial,
+        TZAMaterial,
+        TXTBoxSideMaterial[j],
+        TXTBoxSideMaterial[j],
+        TXTBoxSQMaterial[j],
+        TXTBoxSQMaterial[j]
+    ];
+    return materials;
+}
+
 
 function createMaterialsMobile() {
 
@@ -234,7 +284,7 @@ function init() {
 
 
             scene.add(meshArr[j]);
-            if (isMobile) {
+            if (true) { // TODO: check if device orientation 
                 // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 20, 1000);
                 controls = new THREE.DeviceOrientationControls(scene);
 
@@ -254,47 +304,25 @@ function init() {
             if (j % 2) { // create box
 
 
-                boxArr[j] = new THREE.BoxBufferGeometry(boxWidth * 0.6, boxWidth, 120);
-                meshArr[j] = new THREE.Mesh(boxArr[j], createMaterials());
+                boxArr[j] = new THREE.BoxBufferGeometry(boxWidth, boxWidth, boxWidth * 2);
+                meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialBox(Math.floor(Math.random() * 3 )));
 
             } else if (j % 3) { // create triangle cylincer
                 tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight , 3);
-                tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
-                tmpCylinderGeo.position.y = 0;
-                tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
-                var sphere_geometry = new THREE.CubeGeometry(200, cylBase * 2, 200);
-                var cube1 = new THREE.Mesh(sphere_geometry);
-                cube1.position.y = boxHeight/2;
-
-                cube1.rotation.z = Math.random();
-
-                var cube1_bsp = new ThreeBSP(cube1);
-
-                var cube2 = new THREE.Mesh(sphere_geometry);
-                cube2.position.y = (boxHeight/2) * -1;
-
-                cube2.rotation.z = -Math.random();
-
-                var cube2_bsp = new ThreeBSP(cube2);
-
-                var subtract_bsp = tmpCylinderBsp.subtract(cube2_bsp.union(cube1_bsp));
-
-                var result = subtract_bsp.toGeometry();
-
-                result.materials = [TXTMaterial[Math.floor((Math.random() * (4 - 1)) + 1)], TZAMaterialCyl];
-                for (m = 0; m < result.faces.length; m++) {
-                    if (m < result.faces.length - 6) {
-                        result.faces[m].materialIndex = 1; // material - map
+                tmpCylinder.materials = [TXTMaterial[j], TZAMaterialCyl];
+                for (m = 0; m < tmpCylinder.faces.length; m++) {
+                    if (m < tmpCylinder.faces.length - 6) {
+                        tmpCylinder.faces[m].materialIndex = 1; // material - map
 
                     } else {
-                        result.faces[m].materialIndex = 0; // material - color pattern
+                        tmpCylinder.faces[m].materialIndex = 0; // material - color pattern
 
                     }
                 }
 
                 // console.log(result.faces.length);
 
-                meshArr[j] = new THREE.Mesh(result, result.materials);
+                meshArr[j] = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
 
             } else { // create cylinder
 
@@ -302,7 +330,7 @@ function init() {
                 tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
                 tmpCylinderGeo.position.y = 0;
                 tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
-                var sphere_geometry = new THREE.CubeGeometry(200, cylBase * 2, 200);
+                var sphere_geometry = new THREE.CubeGeometry(300, cylBase * 2.5, 300);
                 var cube1 = new THREE.Mesh(sphere_geometry);
                 cube1.position.y = boxHeight * 0.8;
 
@@ -323,7 +351,7 @@ function init() {
 
                 // result.geometry.computeVertexNormals();
 
-                result.materials = [TXTMaterial[Math.floor((Math.random() * (4 - 1)) + 1)], TZAMaterialCyl];
+                result.materials = [TXTMaterial[j], TZAMaterialCyl];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < result.faces.length - 220) {
                         result.faces[m].materialIndex = 1; // material - map
@@ -547,11 +575,11 @@ function animate() {
                 }
                 if (j % 2) {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
-                    meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
+                    // meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
 
                 } else {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
-                    meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
+                    // meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
                 }
 
                 let vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
@@ -571,23 +599,21 @@ function animate() {
                 // Fx = (isNaN(Fx) ? 0 : Fx);
                 // Fy = (isNaN(Fy) ? 0 : Fy);
 
-// Integrate to get position
+                // Integrate to get position
 
-let DistX = MousePos.x-meshArr[j].position.x;
-let DistY = MousePos.y-meshArr[j].position.y;
+                let DistX = MousePos.x - meshArr[j].position.x;
+                let DistY = MousePos.y - meshArr[j].position.y;
 
-        if (DistX < 200)
-        {
-           meshArr[j].position.x += (DistX)/4000;  
-        }
+                if (DistX < 200) {
+                    meshArr[j].position.x += (DistX) / 4000;
+                }
 
-        if (DistY < 200)
-        {
-           meshArr[j].position.y += (DistY)/4000;  
-        }
-        //    meshArr[j].position.y += (DistY)/1000;  
+                if (DistY < 200) {
+                    meshArr[j].position.y += (DistY) / 4000;
+                }
+                //    meshArr[j].position.y += (DistY)/1000;  
 
-            
+
 
                 // meshArr[j].position.x += MousePos.x / 100;
                 // meshArr[j].position.y += MousePos.y / 100;
