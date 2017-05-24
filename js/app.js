@@ -404,8 +404,8 @@ function init() {
 
             new TWEEN.Tween(meshArr[j].position).to({
                     z: PosArr[j][2]
-                }, 2000 + Math.random() * 4000)
-                .easing(TWEEN.Easing.Elastic.Out).start();
+                }, 1000 + Math.random() * 2000)
+                .easing(TWEEN.Easing.Circular.In).start();
 
 
 
@@ -524,11 +524,18 @@ function onDocumentMouseMove(event) {
 
             let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
-            // if (j==1)
-            // {
+ 
             // console.log();
+            let Influence = Math.pow(Math.max(1-currdistance/500,0),3);
+            // let infX = Math.max(1-currdistance/1000,0);
+            meshArr[j].position.x = meshArr[j].innitialposition.x + Influence * mouseRelations[j].y;     
+            meshArr[j].position.y = meshArr[j].innitialposition.y + Influence * mouseRelations[j].x;     
 
-            // }
+     // All follow mouse
+    //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
+    //  meshArr[j].position.y = meshArr[j].innitialposition.y +  (mouseRelations[j].x);     
+        
+    
             meshArr[j].direction = dir;
 
 
@@ -563,7 +570,7 @@ function animate() {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
                 if (true) // all shapes gets the bounce rotation effect"
                 {
-                    let CalcRoataionStage = Math.floor(currdistance * currdistance / 200000); // the groth is exp (making more rotations when the pointer is far)
+                    let CalcRoataionStage = Math.floor(100 /currdistance); // the groth is exp (making more rotations when the pointer is near)
                     if (CalcRoataionStage != meshArr[j].rotationnum) // rotationnum keeps the current rotation position
                     {
                         meshArr[j].rotationnum = CalcRoataionStage;
@@ -604,13 +611,13 @@ function animate() {
                 let DistX = MousePos.x - meshArr[j].position.x;
                 let DistY = MousePos.y - meshArr[j].position.y;
 
-                if (DistX < 200) {
-                    meshArr[j].position.x += (DistX) / 4000;
-                }
+                // if (DistX < 200) {
+                //     meshArr[j].position.x += (DistX) / 4000;
+                // }
 
-                if (DistY < 200) {
-                    meshArr[j].position.y += (DistY) / 4000;
-                }
+                // if (DistY < 200) {
+                //     meshArr[j].position.y += (DistY) / 4000;
+                // }
                 //    meshArr[j].position.y += (DistY)/1000;  
 
 
