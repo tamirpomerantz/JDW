@@ -19,19 +19,38 @@ var mouseMoveInterval = 144; // This is for the "jumping" animation.
 var mouseRelations = []; // Arr to keep distance from mouse pointer.
 
 
+var BoxesNumber = 13;
+var PosArr = [];
+
 // Positions of rocks
-var PosArr = [
-    [-222, 300, -10], // middle row, center
-    [-465, 103, 0], // middle row, left
-    [490, -303, -50], //middle row, far right
-    [200, -352, -40], // bottom row, center
-    [-40, 339, 0], // top row, middle
-    [-506, 396, 30], // top row left
-    [-522, -409, -10], // bottom row, left
-    [186, 50, -50], //sec row - right
-    [623, -493, -50], //bottom row - right
-    [309, 480, 0] //top row - right
-];
+
+// for (j=0;j<BoxesNumber;j++)
+// {
+//     let tmpX = Math.floor((Math.random() * 100));
+//     let tmpY = Math.floor((Math.random() * 100));
+//     let tmpZ = Math.floor((Math.random() * 100)-50);
+// PosArr.push([tmpX,tmpY,tmpZ]);
+// console.log('['+tmpX+','+tmpY+','+tmpZ+',],');
+// }
+
+
+
+PosArr = [
+[63,98,-50,],
+[99,75,-35,],
+[50,9,-20,],
+[73,58,-36,],
+[99,54,-28,],
+[19,83,47,],
+[27,91,-42,],
+[68,75,-46,],
+[36,67,-24,],
+[8,18,-35,],
+[35,34,0,],
+[63,81,11,],
+[50,88,-32,]];
+
+
 // Creation of texture materials
 
 var txtArr = [
@@ -224,7 +243,6 @@ function createMaterialsMobile() {
     return materials;
 }
 
-var BoxesNumber = 10;
 var boxArr = [];
 
 var meshArr = [];
@@ -235,8 +253,8 @@ var boxWidth, boxHeight, boxDepth;
 var tmpCylinder;
 var tmpSphere;
 
-
-
+var cylcount = 0
+var camDist = 1500;
 function init() {
     raycaster = new THREE.Raycaster(); // create once
     mouse = new THREE.Vector2(); // create once
@@ -252,8 +270,8 @@ function init() {
     // app
     document.getElementsByClassName("app")[0].appendChild(renderer.domElement);
     // document.body
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.set(0, 0, 1500);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1600);
+    camera.position.set(0, 0, camDist);
 
     scene = new THREE.Scene();
     light = new THREE.DirectionalLight(0xffffff);
@@ -301,13 +319,13 @@ function init() {
 
 
 
-            if (j==1 || j==3 || j==5) { // create box
+            if (j==1 || j==3 || j==5 || j==7) { // create box
 
 
                 boxArr[j] = new THREE.BoxBufferGeometry(boxWidth, boxWidth, boxWidth * 2);
                 meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialBox(Math.floor(Math.random() * 3 )));
 
-            } else if (j % 5==0 || j==2 ) { // create triangle cylincer
+            } else if (j == 0 || j==2 || j==4 || j==6 ) { // create triangle cylincer
                 tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight , 3);
                 tmpCylinder.materials = [TXTMaterial[j], TZAMaterialCyl];
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
@@ -325,21 +343,21 @@ function init() {
                 meshArr[j] = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
 
             } else { // create cylinder
-
-                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight * 1.8, 120);
+                cylcount++;
+                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight * 2, 120);
                 tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
                 tmpCylinderGeo.position.y = 0;
                 tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
                 var sphere_geometry = new THREE.CubeGeometry(300, cylBase * 2.5, 300);
                 var cube1 = new THREE.Mesh(sphere_geometry);
-                cube1.position.y = boxHeight * 0.8;
+                cube1.position.y = boxHeight;
 
                 cube1.rotation.z = Math.random();
 
                 var cube1_bsp = new ThreeBSP(cube1);
 
                 var cube2 = new THREE.Mesh(sphere_geometry);
-                cube2.position.y = (boxHeight * 0.8) * -1;
+                cube2.position.y = (boxHeight) * -1;
 
                 cube2.rotation.z = -Math.random();
 
@@ -351,7 +369,7 @@ function init() {
 
                 // result.geometry.computeVertexNormals();
 
-                result.materials = [TXTMaterial[j], TZAMaterialCyl];
+                result.materials = [TXTMaterial[cylcount], TZAMaterialCyl];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < result.faces.length - 220) {
                         result.faces[m].materialIndex = 1; // material - map
@@ -455,18 +473,16 @@ function onWindowResize() {
     screenWidth = window.innerWidth;
     screenHeight = window.innerHeight;
 
-    if (screenHeight > 700) {
-        screenHeight = 700;
-    }
-        if (screenWidth > 2000) {
-        screenWidth = 2000;
-    }
     let scaleFactor = 0.9 + (screenWidth / windowWidth) * 0.1;
+
+    
+
+// camDist / 2
     if (!isMobile) {
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
-            meshArr[i].positionAfterResize.x = meshArr[i].innitialposition.x*(screenWidth/1000);
-            meshArr[i].positionAfterResize.y = meshArr[i].innitialposition.y * ((screenHeight / 1400));
+            meshArr[i].positionAfterResize.x = ((meshArr[i].innitialposition.x/100)*screenWidth-(screenWidth/2));
+            meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y/100)*screenHeight-(screenHeight/2));
 
             meshArr[i].position.x = meshArr[i].positionAfterResize.x;
             meshArr[i].position.y = meshArr[i].positionAfterResize.y;
@@ -526,7 +542,7 @@ function onDocumentMouseMove(event) {
 
  
             // console.log();
-            let Influence = Math.pow(Math.max(1-currdistance/500,0),3);
+            let Influence = Math.pow(Math.max(1-currdistance/500,0),2);
             // let infX = Math.max(1-currdistance/1000,0);
             meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;     
             meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;     
@@ -570,7 +586,7 @@ function animate() {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
                 if (true) // all shapes gets the bounce rotation effect"
                 {
-                    let CalcRoataionStage = Math.floor(100 /currdistance); // the groth is exp (making more rotations when the pointer is near)
+                    let CalcRoataionStage = Math.floor(250 /currdistance); // the groth is exp (making more rotations when the pointer is near)
                     if (CalcRoataionStage != meshArr[j].rotationnum) // rotationnum keeps the current rotation position
                     {
                         meshArr[j].rotationnum = CalcRoataionStage;
