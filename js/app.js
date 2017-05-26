@@ -36,19 +36,19 @@ var PosArr = [];
 
 
 PosArr = [
-[63,98,-50,],
-[99,75,-35,],
-[50,9,-20,],
-[73,58,-36,],
-[99,54,-28,],
-[19,83,47,],
-[27,91,-42,],
-[68,75,-46,],
-[36,67,-24,],
-[8,18,-35,],
-[35,34,0,],
-[63,81,11,],
-[50,88,-32,]];
+[63,98,0],
+[99,75,0],
+[50,9,0],
+[73,58,0],
+[99,54,0],
+[19,83,0],
+[27,91,0],
+[90,10,40],
+[36,67,0],
+[8,18,0],
+[35,34,40],
+[63,81,0],
+[50,88,0]];
 
 
 // Creation of texture materials
@@ -126,7 +126,7 @@ TZATexture.format = TZATexture.RGBFormat;
 var TZAMaterial = new THREE.MeshPhongMaterial({
     map: TZATexture,
     specular: 0x222222,
-    shininess: 10,
+    shininess: 0,
     bumpMap: TZATexture,
     bumpScale: 2
 })
@@ -481,7 +481,7 @@ function onWindowResize() {
     if (!isMobile) {
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
-            meshArr[i].positionAfterResize.x = ((meshArr[i].innitialposition.x/100)*screenWidth-(screenWidth/2));
+            meshArr[i].positionAfterResize.x = 1.2*((meshArr[i].innitialposition.x/100)*screenWidth-(screenWidth/2));
             meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y/100)*screenHeight-(screenHeight/2));
 
             meshArr[i].position.x = meshArr[i].positionAfterResize.x;
