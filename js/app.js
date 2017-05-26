@@ -45,10 +45,10 @@ PosArr = [
 [27,91,0],
 [90,10,40],
 [36,67,0],
-[8,18,0],
-[35,34,40],
-[63,81,0],
-[50,88,0]];
+[100,0,0],
+[0,0,40],
+[0,100,0],
+[100,100,0]];
 
 
 // Creation of texture materials
@@ -141,7 +141,7 @@ TZATextureCyl.format = TZATextureCyl.RGBFormat;
 var TZAMaterialCyl = new THREE.MeshPhongMaterial({
     map: TZATextureCyl,
     specular: 0x222222,
-    shininess: 2,
+    shininess: 40,
     bumpMap: TZATextureCyl,
     bumpScale: 2
 })
@@ -274,7 +274,7 @@ function init() {
     camera.position.set(0, 0, camDist);
 
     scene = new THREE.Scene();
-    light = new THREE.DirectionalLight(0xffffff);
+    light = new THREE.AmbientLight(0xffffff);
     scene.add(light);
     var tmpCylinderGeo, tmpCylinderBsp;
 
@@ -315,14 +315,14 @@ function init() {
 
             boxWidth = Math.floor((Math.random() * (maxSize - minSize)) + minSize)
             boxHeight = Math.floor((Math.random() * (150 - 100)) + 100)
-            cylBase = Math.floor((Math.random() * (maxSize / 2 - minSize / 2)) + minSize / 2)
+            cylBase = Math.floor((Math.random() * (maxSize / 1.5 - minSize / 1.5)) + minSize / 1.5)
 
 
 
             if (j==1 || j==3 || j==5 || j==7) { // create box
 
 
-                boxArr[j] = new THREE.BoxBufferGeometry(boxWidth, boxWidth, boxWidth * 2);
+                boxArr[j] = new THREE.CylinderBufferGeometry(boxWidth, boxWidth*.9,boxWidth * 2,4);
                 meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialBox(Math.floor(Math.random() * 3 )));
 
             } else if (j == 0 || j==2 || j==4 || j==6 ) { // create triangle cylincer
@@ -422,7 +422,7 @@ function init() {
 
             new TWEEN.Tween(meshArr[j].position).to({
                     z: PosArr[j][2]
-                }, 500 + Math.random() * 1000)
+                }, 2000 + Math.random() * 1000)
                 .easing(TWEEN.Easing.Circular.Out).start();
 
 
@@ -542,7 +542,7 @@ function onDocumentMouseMove(event) {
 
  
             // console.log();
-            let Influence = Math.pow(Math.max(1-currdistance/500,0),2);
+            let Influence = Math.pow(Math.max(1-currdistance/300,0),2);
             // let infX = Math.max(1-currdistance/1000,0);
             meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;     
             meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;     
