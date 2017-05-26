@@ -36,10 +36,10 @@ var PosArr = [];
 
 
 PosArr = [
-[63,98,-50,],
-[99,75,-35,],
-[50,9,-20,],
-[73,58,-36,],
+[0,100,-50,],
+[0,0,-35,],
+[100,100,-20,],
+[100,0,-36,],
 [99,54,-28,],
 [19,83,47,],
 [27,91,-42,],
@@ -274,7 +274,7 @@ function init() {
     camera.position.set(0, 0, camDist);
 
     scene = new THREE.Scene();
-    light = new THREE.DirectionalLight(0xffffff);
+    light = new THREE.AmbientLight(0xffffff);
     scene.add(light);
     var tmpCylinderGeo, tmpCylinderBsp;
 
@@ -542,7 +542,7 @@ function onDocumentMouseMove(event) {
 
  
             // console.log();
-            let Influence = Math.pow(Math.max(1-currdistance/500,0),2);
+            let Influence = Math.pow(Math.max(1-currdistance/300,0),2);
             // let infX = Math.max(1-currdistance/1000,0);
             meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;     
             meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;     
