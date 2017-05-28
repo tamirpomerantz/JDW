@@ -385,7 +385,7 @@ function init() {
                 
                result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < result.faces.length; m++) {
-                    if (m < 6) {
+                    if (m < 12) {
                         result.faces[m].materialIndex = 1; // material - map
 
                     } else {
@@ -511,7 +511,7 @@ function onWindowResize() {
     screenWidth = window.innerWidth;
     screenHeight = window.innerHeight;
 
-    let scaleFactor = 0.7 + (screenWidth / windowWidth) * 0.1;
+    let scaleFactor = 0.8 + (screenWidth / windowWidth) * 0.1;
 
 
 
@@ -652,6 +652,16 @@ function animate() {
 
     if (!isMobile) {
         for (j = 0; j < BoxesNumber; j++) {
+              if (j % 2) { // continuous rotation for Y-Z 
+                        meshArr[j].rotation.y += (0.05 * (Math.PI / 180));
+                        meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
+
+
+                    } else { // continuous rotation for Y-Z 
+                  meshArr[j].rotation.x += (0.1 * (Math.PI / 180));
+                        meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
+                    }
+
             // Continues movement
             if (mouseRelations[j]) {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
@@ -670,23 +680,16 @@ function animate() {
                             .easing(TWEEN.Easing.Bounce.Out).start();
                     }
                 } else {
-                    if (j % 2) { // continuous rotation for Y-Z 
-                        let CalcRoataionStage = 2 / (currdistance * rotationSpeed);
-                        meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
-                        meshArr[j].rotation.z += (CalcRoataionStage * 1.2 * (Math.PI / 180));
 
-
-                    } else { // continuous rotation for Y-Z 
-                        let CalcRoataionStage = 2 / (currdistance * rotationSpeed);
-                        meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
-                        meshArr[j].rotation.z += (CalcRoataionStage * 1.2 * (Math.PI / 180));
-                    }
+                 
+                  
 
                 }
             }
 
         }
         camera.lookAt(scene.position);
+        
     } else {
         // Update mobile gyro controler
         controls.update();
