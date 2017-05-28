@@ -215,6 +215,9 @@ var tmpSphere;
 var cylcount = 0
 var camDist = 1500;
 
+if (isMobile)
+camDist = 500;
+
 function init() {
     raycaster = new THREE.Raycaster(); // create once
     mouse = new THREE.Vector2(); // create once
@@ -263,7 +266,7 @@ function init() {
 
             scene.add(meshArr[j]);
             if (true) { // TODO: check if device orientation 
-                // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 20, 1000);
+                // camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 200, 1000);
                 controls = new THREE.DeviceOrientationControls(scene);
 
             }
