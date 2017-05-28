@@ -36,53 +36,67 @@ var PosArr = [];
 
 
 PosArr = [
-[63,98,0],
-[99,75,0],
-[50,9,0],
-[73,58,0],
-[99,54,0],
-[19,83,0],
-[27,91,0],
-[90,10,40],
-[36,67,0],
-[100,0,0],
-[0,0,40],
-[0,100,0],
-[100,100,0]];
+    [63, 98, 0],
+    [99, 75, 0],
+    [50, 9, 0],
+    [73, 58, 0],
+    [99, 54, 0],
+    [19, 83, 0],
+    [27, 91, 0],
+    [90, 10, 40],
+    [36, 67, 0],
+    [100, 0, 0],
+    [0, 0, 40],
+    [0, 100, 0],
+    [100, 100, 0]
+];
 
 
 // Creation of texture materials
 
 var txtArr = [
     'img/t2.jpg',
+    'img/t3.jpg',
     'img/t4.jpg',
+    'img/t5.jpg',
     'img/t6.jpg',
     'img/t7.jpg',
     'img/t8.jpg',
-    'img/t9.jpg', 
+    'img/t9.jpg',
     'img/t2.jpg',
+    'img/t3.jpg',
     'img/t4.jpg',
-    'img/t6.jpg',
-    'img/t7.jpg',
-    'img/t8.jpg',
-    'img/t9.jpg'
-]
+    'img/t5.jpg'
+];
 
-var textureArr = [];
-
-for (let i = 0; i < txtArr.length; i++) {
-    textureArr[i] = THREE.ImageUtils.loadTexture(txtArr[i]);
-    textureArr[i].wrapS = textureArr[i].wrapT = THREE.RepeatWrapping;
-    textureArr[i].offset.set(0, 0);
-}
-
+var TZAtxtArr = ['img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'];
+var TZAMaterial = [];
 var TXTMaterial = [];
 
 for (let i = 0; i < txtArr.length; i++) {
+    let TMPtexture = THREE.ImageUtils.loadTexture(txtArr[i]);
+    TMPtexture.wrapS = TMPtexture.wrapT = THREE.RepeatWrapping;
+    TMPtexture.offset.set(0, 0);
     TXTMaterial[i] = new THREE.MeshBasicMaterial({
-        map: textureArr[i],
+        map: TMPtexture,
         overdraw: true
     });
+}
+
+for (let i = 0; i < TZAtxtArr.length; i++) {
+    let TZATexture = new THREE.TextureLoader().load(TZAtxtArr[i]);
+    TZATexture.anisotropy = 4;
+    TZATexture.repeat.set(1, 1);
+    TZATexture.offset.set(0.001, 0.001);
+    TZATexture.wrapS = TZATexture.wrapT = THREE.RepeatWrapping;
+    TZATexture.format = TZATexture.RGBFormat;
+    TZAMaterial[i] = new THREE.MeshPhongMaterial({
+        map: TZATexture,
+        specular: 0x222222,
+        shininess: 20,
+        bumpMap: TZATexture,
+        bumpScale: 2
+    })
 }
 
 
@@ -113,67 +127,12 @@ for (let i = 0; i < txtBoxSideArr.length; i++) {
     });
 }
 
-console.log(TXTBoxSQMaterial);
-
-
-var TZATexture = new THREE.TextureLoader().load('img/check4.jpg');
-TZATexture.anisotropy = 4;
-TZATexture.repeat.set(0.2, 0.2);
-TZATexture.offset.set(0.001, 0.001);
-TZATexture.wrapS = TZATexture.wrapT = THREE.RepeatWrapping;
-TZATexture.format = TZATexture.RGBFormat;
-
-var TZAMaterial = new THREE.MeshPhongMaterial({
-    map: TZATexture,
-    specular: 0x222222,
-    shininess: 0,
-    bumpMap: TZATexture,
-    bumpScale: 2
-})
-
-var TZATextureCyl = new THREE.TextureLoader().load('img/check4.jpg');
-TZATextureCyl.anisotropy = 4;
-TZATextureCyl.repeat.set(1, 1);
-TZATextureCyl.offset.set(0.001, 0.001);
-TZATextureCyl.wrapS = TZATextureCyl.wrapT = THREE.RepeatWrapping;
-TZATextureCyl.format = TZATextureCyl.RGBFormat;
-
-var TZAMaterialCyl = new THREE.MeshPhongMaterial({
-    map: TZATextureCyl,
-    specular: 0x222222,
-    shininess: 40,
-    bumpMap: TZATextureCyl,
-    bumpScale: 2
-})
-
-
-
-
-function createMaterials() {
-
-    var rndTXT = Math.floor((Math.random() * textureArr.length));
-
-    var materials = [
-        TZAMaterial,
-        TZAMaterial,
-        TZAMaterial,
-        TXTMaterial[Math.floor((Math.random() * textureArr.length))],
-        TXTMaterial[Math.floor((Math.random() * textureArr.length))],
-        TXTMaterial[Math.floor((Math.random() * textureArr.length))]
-
-    ];
-    return materials;
-}
 
 
 function createMaterialBox(j) {
-    console.log('j:' + j);
     var materials = [
-        TZAMaterial,
-        TZAMaterial,
+        TZAMaterial[j],
         TXTBoxSideMaterial[j],
-        TXTBoxSideMaterial[j],
-        TXTBoxSQMaterial[j],
         TXTBoxSQMaterial[j]
     ];
     return materials;
@@ -255,6 +214,7 @@ var tmpSphere;
 
 var cylcount = 0
 var camDist = 1500;
+
 function init() {
     raycaster = new THREE.Raycaster(); // create once
     mouse = new THREE.Vector2(); // create once
@@ -314,20 +274,35 @@ function init() {
         for (j = 0; j < BoxesNumber; j++) {
 
             boxWidth = Math.floor((Math.random() * (maxSize - minSize)) + minSize)
-            boxHeight = Math.floor((Math.random() * (150 - 100)) + 100)
+            boxHeight = 200;
             cylBase = Math.floor((Math.random() * (maxSize / 1.5 - minSize / 1.5)) + minSize / 1.5)
 
 
 
-            if (j==1 || j==3 || j==5 || j==7) { // create box
+            if (j == 1 || j == 3 || j == 5 || j == 7) { // create box
+
+                let tmpCylinder = new THREE.CylinderGeometry((boxWidth/1.3), (boxWidth/1.3) * .9, boxHeight, 4);
+                tmpCylinder.materials = [TXTMaterial[j],TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
+                for (m = 0; m < tmpCylinder.faces.length; m++) {
+                    if (m == 0 || m == 1 || m == 4 || m == 5) {
+                        tmpCylinder.faces[m].materialIndex = 0; // side 2
+                    } else  if (m ==2 ||m ==3 ||m ==6 ||m ==7 ){
+                        tmpCylinder.faces[m].materialIndex = 2; // side 1 
+                    } else {
+                        tmpCylinder.faces[m].materialIndex = 1; // edge squaer
+                        
+                    }
+                }
+
+                // console.log(result.faces.length);
+
+                meshArr[j] = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
 
 
-                boxArr[j] = new THREE.CylinderBufferGeometry(boxWidth, boxWidth*.9,boxWidth * 2,4);
-                meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialBox(Math.floor(Math.random() * 3 )));
 
-            } else if (j == 0 || j==2 || j==4 || j==6 ) { // create triangle cylincer
-                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight , 3);
-                tmpCylinder.materials = [TXTMaterial[j], TZAMaterialCyl];
+            } else if (j == 0 || j == 2 || j == 4 || j == 6) { // create triangle cylincer
+                tmpCylinder = new THREE.CylinderGeometry(cylBase*1.3, cylBase*1.1, boxHeight, 3);
+                tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
                     if (m < tmpCylinder.faces.length - 6) {
                         tmpCylinder.faces[m].materialIndex = 1; // material - map
@@ -369,7 +344,7 @@ function init() {
 
                 // result.geometry.computeVertexNormals();
 
-                result.materials = [TXTMaterial[cylcount], TZAMaterialCyl];
+                result.materials = [TXTMaterial[cylcount], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < result.faces.length - 220) {
                         result.faces[m].materialIndex = 1; // material - map
@@ -475,14 +450,14 @@ function onWindowResize() {
 
     let scaleFactor = 0.9 + (screenWidth / windowWidth) * 0.1;
 
-    
 
-// camDist / 2
+
+    // camDist / 2
     if (!isMobile) {
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
-            meshArr[i].positionAfterResize.x = 1.2*((meshArr[i].innitialposition.x/100)*screenWidth-(screenWidth/2));
-            meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y/100)*screenHeight-(screenHeight/2));
+            meshArr[i].positionAfterResize.x = 1.2 * ((meshArr[i].innitialposition.x / 100) * screenWidth - (screenWidth / 2));
+            meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y / 100) * screenHeight - (screenHeight / 2));
 
             meshArr[i].position.x = meshArr[i].positionAfterResize.x;
             meshArr[i].position.y = meshArr[i].positionAfterResize.y;
@@ -540,18 +515,18 @@ function onDocumentMouseMove(event) {
 
             let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
- 
-            // console.log();
-            let Influence = Math.pow(Math.max(1-currdistance/300,0),2);
-            // let infX = Math.max(1-currdistance/1000,0);
-            meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;     
-            meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;     
 
-     // All follow mouse
-    //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
-    //  meshArr[j].position.y = meshArr[j].innitialposition.y +  (mouseRelations[j].x);     
-        
-    
+            // console.log();
+            let Influence = Math.pow(Math.max(1 - currdistance / 300, 0), 2);
+            // let infX = Math.max(1-currdistance/1000,0);
+            meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;
+            meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;
+
+            // All follow mouse
+            //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
+            //  meshArr[j].position.y = meshArr[j].innitialposition.y +  (mouseRelations[j].x);     
+
+
             meshArr[j].direction = dir;
 
 
@@ -586,7 +561,7 @@ function animate() {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
                 if (true) // all shapes gets the bounce rotation effect"
                 {
-                    let CalcRoataionStage = Math.floor(250 /currdistance); // the groth is exp (making more rotations when the pointer is near)
+                    let CalcRoataionStage = Math.floor(250 / currdistance); // the groth is exp (making more rotations when the pointer is near)
                     if (CalcRoataionStage != meshArr[j].rotationnum) // rotationnum keeps the current rotation position
                     {
                         meshArr[j].rotationnum = CalcRoataionStage;
