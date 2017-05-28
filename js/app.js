@@ -71,12 +71,12 @@ var TXTMaterialScale2 = [];
 
 
 for (let i = 0; i < txtArr.length; i++) {
-    let TMPtexture = THREE.ImageUtils.loadTexture(txtArr[i]);
+    let TMPtexture = new THREE.TextureLoader().load(txtArr[i]);
     TMPtexture.wrapS = TMPtexture.wrapT = THREE.RepeatWrapping;
     TMPtexture.offset.set(0, 0);
     TMPtexture.repeat.set(1, 1);
 
-    let TMPtextureScale2 = THREE.ImageUtils.loadTexture(txtArr[i]);
+    let TMPtextureScale2 = new THREE.TextureLoader().load(txtArr[i]);
     TMPtextureScale2.wrapS = TMPtextureScale2.wrapT = THREE.RepeatWrapping;
     TMPtextureScale2.offset.set(0, 0);
     TMPtextureScale2.repeat.set(0.5, 0.5);
@@ -117,7 +117,7 @@ var txtBoxSideArr = ['img/BOX-SIDE-01.jpg', 'img/BOX-SIDE-02.jpg', 'img/BOX-SIDE
 
 for (let i = 0; i < txtBoxSideArr.length; i++) {
     // Box side
-    let textureBoxSideArr = THREE.ImageUtils.loadTexture(txtBoxSideArr[i]);
+    let textureBoxSideArr = new THREE.TextureLoader().load(txtBoxSideArr[i]);
     textureBoxSideArr.wrapS = textureBoxSideArr.wrapT = THREE.RepeatWrapping;
     textureBoxSideArr.repeat.set(1, 0.666666);
     textureBoxSideArr.offset.set(0, 0.33333);
@@ -126,7 +126,7 @@ for (let i = 0; i < txtBoxSideArr.length; i++) {
         overdraw: true
     });
     // Box square
-    let textureBoxSQ = THREE.ImageUtils.loadTexture(txtBoxSideArr[i]);
+    let textureBoxSQ = new THREE.TextureLoader().load(txtBoxSideArr[i]);
     textureBoxSQ.wrapS = textureBoxSQ.wrapT = THREE.RepeatWrapping;
     textureBoxSQ.repeat.set(1, 0.333);
     textureBoxSQ.offset.set(0, 0);
@@ -398,10 +398,11 @@ function init() {
 }
 
 
-
+isAnimationOn = true;
 function exitAnimation() {
-    console.log('ending animation');
-    for (j = 0; j < BoxesNumber; j++) {
+    if (isAnimationOn)
+    {
+         for (j = 0; j < BoxesNumber; j++) {
         new TWEEN.Tween(meshArr[j].position).to({
                 z: -300
             }, 2000 + Math.random() * 4000)
@@ -411,8 +412,16 @@ function exitAnimation() {
                 y: 0,
                 x: 0
             }, 1000)
-            .easing(TWEEN.Easing.Elastic.Out).start();
+            .easing(TWEEN.Easing.Elastic.Out).start()
+            .onComplete(function() {
+  scene.remove(meshArr[j]);
+});
+            
+            
     }
+isAnimationOn = false;
+    } 
+   
 }
 
 
@@ -472,18 +481,18 @@ var prevMousePos = {
     y: 0
 };
 var changeToTriggerAnimation = 0.1;
+var mousePullStrength = 600;
 
 function onDocumentMouseMove(event) {
 
     if (!isMobile) {
 
-        // Experiment: get mouse positoin on every 100 move events
+        //get mouse positoin
 
         mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
         // console.log(mouse.x, mouse.y)
-
-
+        // Change on 
         if (Math.abs(mouse.x - prevMousePos.x) > changeToTriggerAnimation || Math.abs(mouse.y - prevMousePos.y) > changeToTriggerAnimation) {
             prevMousePos.x = mouse.x;
             prevMousePos.y = mouse.y;
@@ -503,11 +512,10 @@ function onDocumentMouseMove(event) {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
 
-                let Influence = Math.pow(Math.max(1 - currdistance / 300, 0), 2);
+                let Influence = Math.pow(Math.max(1 - currdistance / mousePullStrength, 0), 2);
 
 
-                // Tween to change
-
+                // Tween to new position
                 new TWEEN.Tween(meshArr[j].position).to({
                         x: (meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y),
                         y: (meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x)
@@ -570,7 +578,7 @@ function animate() {
                 if (currdistance < 150) // all shapes gets the bounce rotation effect"
                 {
                     let CalcRoataionStage = Math.floor(mouseMoveInterval / currdistance); // the groth is exp (making more rotations when the pointer is near)
-                    CalcRoataionStage = Math.min(Math.max(CalcRoataionStage, 0), 8); // clamp number of rotations to 2 ()
+                    CalcRoataionStage = Math.min(Math.max(CalcRoataionStage, 0), 6); // clamp number of rotations to 2 ()
 
                     if (CalcRoataionStage != meshArr[j].rotationnum) // rotationnum keeps the current rotation position
                     {
@@ -617,3 +625,6 @@ function render() {
 let time = 0;
 init();
 animate();
+
+
+
