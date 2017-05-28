@@ -36,18 +36,18 @@ var PosArr = [];
 
 
 PosArr = [
-    [63, 98, 0],
-    [99, 75, 0],
-    [50, 9, 0],
-    [73, 58, 0],
-    [99, 54, 0],
-    [19, 83, 0],
-    [27, 91, 0],
-    [90, 10, 40],
-    [36, 67, 0],
-    [100, 0, 0],
-    [0, 0, 40],
-    [0, 100, 0],
+    [90, 36, 0],
+    [0, 66, 0],
+    [68, 90, 0],
+    [19, 25, 0],
+    [18, 89, 0],
+    [62, 58, 0],
+    [88, 83, 0],
+    [40, 19, 40],
+    [20, 48, 0],
+    [83, 9, 0],
+    [70, 19, 40],
+    [11, 11, 0],
     [100, 100, 0]
 ];
 
@@ -459,7 +459,7 @@ function onWindowResize() {
     screenWidth = window.innerWidth;
     screenHeight = window.innerHeight;
 
-    let scaleFactor = 0.9 + (screenWidth / windowWidth) * 0.1;
+    let scaleFactor = 0.7 + (screenWidth / windowWidth) * 0.1;
 
 
 
