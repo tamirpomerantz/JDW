@@ -29,7 +29,9 @@ PosArr = [
     [42, 97, 0],
     [100, 100, 0]
 ];
-// Positions of rocks
+
+
+// Random positions of rocks
 
 // for (j=0;j<BoxesNumber;j++)
 // {
@@ -41,18 +43,12 @@ PosArr = [
 // }
 
 
-if (window.innerWidth < 640) {
+// Detect mobile
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 640) {
     var isMobile = true;
-
 }
 
-
-
-
-
-
 // Creation of texture materials
-
 var txtArr = [
     'img/t2.jpg',
     'img/t3.jpg',
@@ -333,27 +329,25 @@ function init() {
                 tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
                 tmpCylinderGeo.position.y = 0;
                 tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
-                var sphere_geometry = new THREE.CubeGeometry(300, cylBase * 2.5, 300);
+
+                //cube 1 - to cut cilynder
+                var sphere_geometry = new THREE.CubeGeometry(1000, cylBase * 2.5, 1000);
                 var cube1 = new THREE.Mesh(sphere_geometry);
                 cube1.position.y = boxHeight;
-
                 cube1.rotation.z = Math.random();
-
                 var cube1_bsp = new ThreeBSP(cube1);
 
+                //cube 2 - to cut cilynder
                 var cube2 = new THREE.Mesh(sphere_geometry);
                 cube2.position.y = (boxHeight) * -1;
-
                 cube2.rotation.z = -Math.random();
-
                 var cube2_bsp = new ThreeBSP(cube2);
 
+                //substract cube from cylinder
                 var subtract_bsp = tmpCylinderBsp.subtract(cube2_bsp.union(cube1_bsp));
-
                 var result = subtract_bsp.toGeometry();
 
-                // result.geometry.computeVertexNormals();
-
+                // apply materials on right faces
                 result.materials = [TXTMaterial[cylcount], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < result.faces.length - 220) {
@@ -361,7 +355,6 @@ function init() {
 
                     } else {
                         result.faces[m].materialIndex = 0; // material - color pattern
-
                     }
                 }
 
@@ -370,13 +363,13 @@ function init() {
                 meshArr[j] = new THREE.Mesh(result, result.materials);
 
             }
-            
+
 
             meshArr[j].innitialposition = {};
             meshArr[j].velocity = {};
             meshArr[j].positionAfterResize = {};
             meshArr[j].innitialposition.x = PosArr[j][0];
-            meshArr[j].innitialposition.y = 100-PosArr[j][1];
+            meshArr[j].innitialposition.y = 100 - PosArr[j][1];
 
             meshArr[j].position.z = -(Math.random() * 800) - 1000; // for innitial fade in
             meshArr[j].rotation.z = Math.random();
@@ -473,47 +466,88 @@ function distanceVector(v1, v2) {
 }
 
 
+var moveEventCount = 0;
+var prevMousePos = {
+    x: 0,
+    y: 0
+};
+var changeToTriggerAnimation = 0.1;
+
 function onDocumentMouseMove(event) {
 
     if (!isMobile) {
+
+        // Experiment: get mouse positoin on every 100 move events
+
         mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
-        let vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-        vector.unproject(camera);
-        var dir = vector.sub(camera.position).normalize();
-        var distance = -camera.position.z / dir.z;
-        var MousePos = camera.position.clone().add(dir.multiplyScalar(distance));
-
-        for (j = 0; j < BoxesNumber; j++) {
-
-            let tmpObjPso = new THREE.Vector3();
-            // tmpObjPso.setFromMatrixPosition( meshArr[0].matrixWorld );
-            tmpObjPso.x = meshArr[j].positionAfterResize.x;
-            tmpObjPso.y = meshArr[j].positionAfterResize.y;
-            // tmpObjPso.z = 0;
-
-            // mouseRelations[j] = MousePos.distanceTo(tmpObjPso); 
-            mouseRelations[j] = distanceVector(MousePos, tmpObjPso);
-
-            let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
+        // console.log(mouse.x, mouse.y)
 
 
-            // console.log();
-            let Influence = Math.pow(Math.max(1 - currdistance / 300, 0), 2);
-            // let infX = Math.max(1-currdistance/1000,0);
-            meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;
-            meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;
+        if (Math.abs(mouse.x - prevMousePos.x) > changeToTriggerAnimation || Math.abs(mouse.y - prevMousePos.y) > changeToTriggerAnimation) {
+            prevMousePos.x = mouse.x;
+            prevMousePos.y = mouse.y;
+            let vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+            vector.unproject(camera);
+            var dir = vector.sub(camera.position).normalize();
+            var distance = -camera.position.z / dir.z;
+            var MousePos = camera.position.clone().add(dir.multiplyScalar(distance));
 
-            // All follow mouse
-            //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
-            //  meshArr[j].position.y = meshArr[j].innitialposition.y +  (mouseRelations[j].x);     
+            for (j = 0; j < BoxesNumber; j++) {
+
+                let tmpObjPso = new THREE.Vector3();
+                tmpObjPso.x = meshArr[j].positionAfterResize.x;
+                tmpObjPso.y = meshArr[j].positionAfterResize.y;
+                mouseRelations[j] = distanceVector(MousePos, tmpObjPso);
+
+                let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
 
-            meshArr[j].direction = dir;
+                let Influence = Math.pow(Math.max(1 - currdistance / 300, 0), 2);
 
 
+                // Tween to change
+
+                new TWEEN.Tween(meshArr[j].position).to({
+                        x: (meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y),
+                        y: (meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x)
+                    }, 2000)
+                    .easing(TWEEN.Easing.Cubic.Out).start();
+            }
         }
+
+
+
+        // for (j = 0; j < BoxesNumber; j++) {
+
+        //     let tmpObjPso = new THREE.Vector3();
+        //     // tmpObjPso.setFromMatrixPosition( meshArr[0].matrixWorld );
+        //     tmpObjPso.x = meshArr[j].positionAfterResize.x;
+        //     tmpObjPso.y = meshArr[j].positionAfterResize.y;
+        //     // tmpObjPso.z = 0;
+
+        //     // mouseRelations[j] = MousePos.distanceTo(tmpObjPso); 
+        //     mouseRelations[j] = distanceVector(MousePos, tmpObjPso);
+
+        //     let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
+
+
+        //     // console.log();
+        //     let Influence = Math.pow(Math.max(1 - currdistance / 300, 0), 2);
+        //     // let infX = Math.max(1-currdistance/1000,0);
+        //     meshArr[j].position.x = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;
+        //     meshArr[j].position.y = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;
+
+        //     // All follow mouse
+        //     //    meshArr[j].position.x = meshArr[j].innitialposition.x +  (mouseRelations[j].y);     
+        //     //  meshArr[j].position.y = meshArr[j].innitialposition.y +  (mouseRelations[j].x);     
+
+
+        //     meshArr[j].direction = dir;
+
+
+        // }
+
         var windowHalfX = window.innerWidth / 2;
         var windowHalfY = window.innerHeight / 2;
     }
