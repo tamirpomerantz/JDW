@@ -72,13 +72,27 @@ var txtArr = [
 var TZAtxtArr = ['img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'];
 var TZAMaterial = [];
 var TXTMaterial = [];
+var TXTMaterialScale2 = [];
+
 
 for (let i = 0; i < txtArr.length; i++) {
     let TMPtexture = THREE.ImageUtils.loadTexture(txtArr[i]);
     TMPtexture.wrapS = TMPtexture.wrapT = THREE.RepeatWrapping;
     TMPtexture.offset.set(0, 0);
+    TMPtexture.repeat.set(1, 1);    
+
+      let TMPtextureScale2 = THREE.ImageUtils.loadTexture(txtArr[i]);
+    TMPtextureScale2.wrapS = TMPtextureScale2.wrapT = THREE.RepeatWrapping;
+    TMPtextureScale2.offset.set(0, 0);
+    TMPtextureScale2.repeat.set(0.5, 0.5);    
+
+
     TXTMaterial[i] = new THREE.MeshBasicMaterial({
         map: TMPtexture,
+        overdraw: true
+    });
+    TXTMaterialScale2[i] =  new THREE.MeshBasicMaterial({
+        map: TMPtextureScale2,
         overdraw: true
     });
 }
@@ -244,24 +258,18 @@ function init() {
 
     if (isMobile) {
 
-
-
         let globalBaflaTilt = -25 * (Math.PI / 180);
         for (j = 0; j < 3; j++) {
             boxArr[j] = new THREE.BoxBufferGeometry(40, 170, 50);
             meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialsMobile());
-
             meshArr[j].position.z = (j * 60) - 60;
             meshArr[j].position.y = -((j * 30) - 30);
-
             meshArr[j].rotation.z = j * -78 * (Math.PI / 180); // bafla circular rotation
             meshArr[j].rotation.x = globalBaflaTilt;
             meshArr[j].rotation.y = Math.floor((Math.random() * (6))) * (Math.PI / 180); // small <10 distortions in y rotation
-
-            if (j == 2) {
+            if (j == 2) 
                 meshArr[j].rotation.x = -6 * (Math.PI / 180);
 
-            }
 
 
             scene.add(meshArr[j]);
@@ -284,8 +292,8 @@ function init() {
 
             if (j == 1 || j == 3 || j == 5 || j == 7) { // create box
 
-                let tmpCylinder = new THREE.CylinderGeometry((boxWidth/1.3), (boxWidth/1.3) * .9, boxHeight, 4);
-                tmpCylinder.materials = [TXTMaterial[j],TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
+                let tmpCylinder = new THREE.CylinderGeometry((boxWidth/1.3), (boxWidth/1.3) * .8, boxHeight, 4);
+                tmpCylinder.materials = [TXTMaterial[j],TXTMaterialScale2[j], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
                     if (m == 0 || m == 1 || m == 4 || m == 5) {
                         tmpCylinder.faces[m].materialIndex = 0; // side 2
@@ -542,19 +550,12 @@ function onDocumentMouseMove(event) {
 
 
 var rotationSpeed = 0.1;
-// var frameRate = 1 / 40; // Seconds  
-// var Cd = 0.47; // Dimensionless  
-// var rho = 1.22; // kg / m^3  
-// var A = Math.PI * 40 * 40 / (10000);
-// var ag = 9.81;
 
 
 function animate() {
 
     requestAnimationFrame(animate);
-    // camera.position.x += (mouseX - camera.position.x) * .05;
-    // camera.position.y += (-mouseY - camera.position.y) * .05;
-    // console.log( );
+
     if (!isMobile) {
         var timer = Date.now() * 0.00005;
 
@@ -565,22 +566,27 @@ function animate() {
                 if (true) // all shapes gets the bounce rotation effect"
                 {
                     let CalcRoataionStage = Math.floor(250 / currdistance); // the groth is exp (making more rotations when the pointer is near)
+                    CalcRoataionStage = Math.min(Math.max(CalcRoataionStage, 0), 16); // clamp number of rotations to 2 ()
+                    
                     if (CalcRoataionStage != meshArr[j].rotationnum) // rotationnum keeps the current rotation position
                     {
                         meshArr[j].rotationnum = CalcRoataionStage;
                         new TWEEN.Tween(meshArr[j].rotation).to({
                                 z: (CalcRoataionStage * 45 * (Math.PI / 180))
-                            }, 700)
+                        }, 1500)
                             .easing(TWEEN.Easing.Bounce.Out).start();
                     }
                 }
                 if (j % 2) {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
                     meshArr[j].rotation.y += (CalcRoataionStage * (Math.PI / 180));
+                    meshArr[j].rotation.z += (CalcRoataionStage*1.2 * (Math.PI / 180));
+                    
 
                 } else {
                     let CalcRoataionStage = currdistance * rotationSpeed / 1000;
                     meshArr[j].rotation.x += (CalcRoataionStage * (Math.PI / 180));
+                    meshArr[j].rotation.z += (CalcRoataionStage*1.2 * (Math.PI / 180));
                 }
 
                 let vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
