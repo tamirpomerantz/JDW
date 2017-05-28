@@ -286,52 +286,71 @@ function init() {
 
 
             if (j == 1 || j == 3 || j == 5 || j == 7) { // create box
-
+                // Cylinder 1
                 let tmpCylinder = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * .8, boxHeight, 4);
-                tmpCylinder.materials = [TXTMaterial[j], TXTMaterialScale2[j], TZAMaterial[Math.floor(Math.random() * 4)]];
+                let tmpCylinder2 = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * .8, boxHeight, 4);
+
+                let currTexture = TZAMaterial[Math.floor(Math.random() * 4)];
+                tmpCylinder.materials = [TXTMaterial[j], TXTMaterialScale2[j], currTexture];
+                tmpCylinder2.materials = [TXTMaterial[2], TXTMaterialScale2[2], currTexture];
+
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
                     if (m == 0 || m == 1 || m == 4 || m == 5) {
                         tmpCylinder.faces[m].materialIndex = 0; // side 2
+                        tmpCylinder2.faces[m].materialIndex = 0; // side 2
                     } else if (m == 2 || m == 3 || m == 6 || m == 7) {
                         tmpCylinder.faces[m].materialIndex = 2; // side 1 
+                        tmpCylinder2.faces[m].materialIndex = 2; // side 1 
                     } else {
                         tmpCylinder.faces[m].materialIndex = 1; // edge squaer
+                        tmpCylinder2.faces[m].materialIndex = 1; // edge squaer
 
                     }
                 }
 
+
+
                 // console.log(result.faces.length);
 
-                meshArr[j] = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
+                let group = new THREE.Object3D(); //create an empty container
+
+                let tmpmesh = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
+                let tmpmesh2 = new THREE.Mesh(tmpCylinder2, tmpCylinder2.materials);
+                tmpmesh.scale.y = 1.3;
+                tmpmesh2.position.x = (boxWidth / 1.3);
+                tmpmesh2.position.z = (boxWidth / 1.3);
+                // tmpmesh2.rotation.y = -80 * (Math.PI / 180);
+
+                if (j == 1) {
+                    tmpmesh.rotation.z = 90 * (Math.PI / 180);
+                    tmpmesh.rotation.x = 90 * (Math.PI / 180);
+                }
+
+                if (j == 3) {
+                    tmpmesh.rotation.z = 0 * (Math.PI / 180);
+                    tmpmesh.rotation.x = 90 * (Math.PI / 180);
+                }
+
+
+
+                group.add(tmpmesh); //add a mesh with geometry to it
+                // group.add(tmpmesh2); //add a mesh with geometry to it
+
+                meshArr[j] = group;
 
 
 
             } else if (j == 0 || j == 2 || j == 4 || j == 6) { // create triangle cylincer
-                tmpCylinder = new THREE.CylinderGeometry(cylBase * 1.3, cylBase * 1.1, boxHeight, 3);
+                tmpCylinder = new THREE.CylinderGeometry(cylBase * 1.3, cylBase, boxHeight*2, 3);
                 tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
-                for (m = 0; m < tmpCylinder.faces.length; m++) {
-                    if (m < tmpCylinder.faces.length - 6) {
-                        tmpCylinder.faces[m].materialIndex = 1; // material - map
 
-                    } else {
-                        tmpCylinder.faces[m].materialIndex = 0; // material - color pattern
-
-                    }
-                }
+                tmpCylinderBsp = new ThreeBSP(tmpCylinder);
 
                 // console.log(result.faces.length);
 
-                meshArr[j] = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
-
-            } else { // create cylinder
-                cylcount++;
-                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight * 2, 120);
-                tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
-                tmpCylinderGeo.position.y = 0;
-                tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
 
                 //cube 1 - to cut cilynder
-                var sphere_geometry = new THREE.CubeGeometry(1000, cylBase * 2.5, 1000);
+                var sphere_geometry = new THREE.CubeGeometry(1000, boxHeight, 1000);
                 var cube1 = new THREE.Mesh(sphere_geometry);
                 cube1.position.y = boxHeight;
                 cube1.rotation.z = Math.random();
@@ -340,6 +359,60 @@ function init() {
                 //cube 2 - to cut cilynder
                 var cube2 = new THREE.Mesh(sphere_geometry);
                 cube2.position.y = (boxHeight) * -1;
+                cube2.rotation.z = -Math.random();
+                var cube2_bsp = new ThreeBSP(cube2);
+
+                //substract cube from cylinder
+                var subtract_bsp = tmpCylinderBsp.subtract(cube2_bsp.union(cube1_bsp));
+                var result = subtract_bsp.toGeometry();
+
+
+                for (m = 0; m < result.faces.length; m++) {
+                    if (m < result.faces.length - 6) {
+                        result.faces[m].materialIndex = 1; // material - map
+
+                    } else {
+                        result.faces[m].materialIndex = 0; // material - color pattern
+
+                    }
+                }
+
+                
+               result.materials = [TXTMaterial[1], TZAMaterial[Math.floor(Math.random() * 4)]];
+                for (m = 0; m < result.faces.length; m++) {
+                    if (m < result.faces.length - 6) {
+                        result.faces[m].materialIndex = 1; // material - map
+
+                    } else {
+                        result.faces[m].materialIndex = 0; // material - color pattern
+                    }
+                }
+                meshArr[j] = new THREE.Mesh(result, result.materials);
+
+
+            } else { // create cylinder
+                cylcount++;
+                let TMPCylHeight = boxHeight * ((Math.random() * (2.5 - 1)) + 1);
+
+                if (j == 8 || j == 9)
+                    TMPCylHeight = boxHeight;
+
+
+                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, TMPCylHeight, 120);
+                tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
+                tmpCylinderGeo.position.y = 0;
+                tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
+
+                //cube 1 - to cut cilynder
+                var sphere_geometry = new THREE.CubeGeometry(1000, cylBase * 2.5, 1000);
+                var cube1 = new THREE.Mesh(sphere_geometry);
+                cube1.position.y = TMPCylHeight / 2;
+                cube1.rotation.z = Math.random();
+                var cube1_bsp = new ThreeBSP(cube1);
+
+                //cube 2 - to cut cilynder
+                var cube2 = new THREE.Mesh(sphere_geometry);
+                cube2.position.y = (TMPCylHeight / 2) * -1;
                 cube2.rotation.z = -Math.random();
                 var cube2_bsp = new ThreeBSP(cube2);
 
@@ -399,29 +472,29 @@ function init() {
 
 
 isAnimationOn = true;
+
 function exitAnimation() {
-    if (isAnimationOn)
-    {
-         for (j = 0; j < BoxesNumber; j++) {
-        new TWEEN.Tween(meshArr[j].position).to({
-                z: -300
-            }, 2000 + Math.random() * 4000)
-            .easing(TWEEN.Easing.Elastic.Out).start();
-        new TWEEN.Tween(meshArr[j].scale).to({
-                z: 0,
-                y: 0,
-                x: 0
-            }, 1000)
-            .easing(TWEEN.Easing.Elastic.Out).start()
-            .onComplete(function() {
-  scene.remove(meshArr[j]);
-});
-            
-            
+    if (isAnimationOn) {
+        for (j = 0; j < BoxesNumber; j++) {
+            new TWEEN.Tween(meshArr[j].position).to({
+                    z: -300
+                }, 2000 + Math.random() * 4000)
+                .easing(TWEEN.Easing.Elastic.Out).start();
+            new TWEEN.Tween(meshArr[j].scale).to({
+                    z: 0,
+                    y: 0,
+                    x: 0
+                }, 1000)
+                .easing(TWEEN.Easing.Elastic.Out).start()
+                .onComplete(function () {
+                    scene.remove(meshArr[j]);
+                });
+
+
+        }
+        isAnimationOn = false;
     }
-isAnimationOn = false;
-    } 
-   
+
 }
 
 
@@ -480,8 +553,11 @@ var prevMousePos = {
     x: 0,
     y: 0
 };
+
 var changeToTriggerAnimation = 0.1;
-var mousePullStrength = 600;
+var mousePullStrength = 2500;
+var mousePullStrengthTimeout = 15000;
+
 
 function onDocumentMouseMove(event) {
 
@@ -519,7 +595,7 @@ function onDocumentMouseMove(event) {
                 new TWEEN.Tween(meshArr[j].position).to({
                         x: (meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y),
                         y: (meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x)
-                    }, 2000)
+                    }, mousePullStrengthTimeout)
                     .easing(TWEEN.Easing.Cubic.Out).start();
             }
         }
@@ -575,7 +651,7 @@ function animate() {
             if (mouseRelations[j]) {
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
-                if (currdistance < 150) // all shapes gets the bounce rotation effect"
+                if (currdistance < 400) // all shapes gets the bounce rotation effect"
                 {
                     let CalcRoataionStage = Math.floor(mouseMoveInterval / currdistance); // the groth is exp (making more rotations when the pointer is near)
                     CalcRoataionStage = Math.min(Math.max(CalcRoataionStage, 0), 6); // clamp number of rotations to 2 ()
@@ -625,6 +701,3 @@ function render() {
 let time = 0;
 init();
 animate();
-
-
-
