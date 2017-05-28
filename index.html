@@ -27,12 +27,12 @@
         body {
             background: #E1EBFB;
         }
-        
+
         .app {
             position: fixed;
-            z-index:10;
+            z-index: 10;
         }
-        
+
         .border {
             position: fixed;
             border: 70px solid #fff;
@@ -41,16 +41,25 @@
             width: 100%;
             height: 100%;
             box-sizing: border-box;
-            z-index:100;
+            z-index: 100;
         }
 
+        @media (max-width: 640px) {
+  .border {
+    display: none;
+  }
+}
+
         .float {
- position: fixed;
-          
-            top: 100px;
-            left: 100px;
-            font-size:200px;
-            z-index:1;
+            position: fixed;
+            font-family: 'Simpler';
+            top: 250px;
+            left: 0px;
+            font-size: 90px;
+            FONT-WEIGHT: 700;
+            width: 100%;
+            text-align: center;
+            z-index: 1;
         }
     </style>
 </head>
@@ -58,7 +67,7 @@
 <body id="top" ng-class="{'body--dialog-open':(selectedIndex.current != -1)}" ng-controller="index">
     <div class="border"></div>
     <div class="app"></div>
-    <div class="float">foo</div>
+    <div class="float">JERUSALEM DESIGN WEEK</div>
     <!--TODO: Write position controler-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>-->
