@@ -142,14 +142,14 @@ function createMaterialBox(j) {
 function createMaterialsMobile() {
 
 
-    var newTZATexture = new THREE.TextureLoader().load('img/check4.jpg');
+    var newTZATexture = new THREE.TextureLoader().load('img/check1.jpg');
     newTZATexture.anisotropy = 4;
     newTZATexture.repeat.set(0.5, 2);
     newTZATexture.offset.set(0.001, 0.001);
     newTZATexture.wrapS = newTZATexture.wrapT = THREE.RepeatWrapping;
     newTZATexture.format = newTZATexture.RGBFormat;
 
-    var newTZATextureMap = new THREE.TextureLoader().load('img/check4.jpg');
+    var newTZATextureMap = new THREE.TextureLoader().load('img/check1.jpg');
     newTZATextureMap.repeat.set(0.5, 2);
     newTZATextureMap.offset.set(0.001, 0.001);
     newTZATextureMap.wrapS = newTZATextureMap.wrapT = THREE.RepeatWrapping;
