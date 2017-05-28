@@ -25,7 +25,7 @@
 
     <style>
         body {
-            background: #E1EBFB;
+            background: #eee;
         }
 
         .app {
@@ -58,23 +58,13 @@
             z-index: 1;
         }
 
-             @media (max-width: 640px) {
-  .border {
-    display: none;
-  }
-  .float {
-    display: none;
-      
-  } 
-
-}
+        
     </style>
 </head>
 
 <body id="top" ng-class="{'body--dialog-open':(selectedIndex.current != -1)}" ng-controller="index">
     <div class="border"></div>
     <div class="app"></div>
-    <div class="float">JERUSALEM DESIGN WEEK</div>
     <!--TODO: Write position controler-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>-->
