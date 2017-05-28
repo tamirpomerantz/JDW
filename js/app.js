@@ -9,7 +9,7 @@ var windowWidth = window.screen.width;
 var windowHeight = window.screen.height;
 var rotationSpeed = 0.1;
 var BoxesNumber = 13;
-var mouseMoveInterval = 250; // This is for the "jumping" animation. 
+var mouseMoveInterval = 350; // This is for the "jumping" animation. 
 var mouseRelations = []; // Arr to keep distance from mouse pointer.
 
 
@@ -18,15 +18,15 @@ PosArr = [
     [90, 36, 0],
     [0, 66, 0],
     [68, 90, 0],
-    [19, 25, 0],
+    [19, 25, 100],
     [18, 89, 0],
     [62, 58, 0],
-    [88, 83, 0],
-    [40, 19, 0],
+    [88, 83, 100],
+    [40, 19, 200],
     [20, 48, 0],
     [0, 0, 0],
     [70, 19, 0],
-    [42, 97, 0],
+    [42, 97, 100],
     [100, 100, 0]
 ];
 
@@ -285,10 +285,10 @@ function init() {
 
 
 
-            if (j == 1 || j == 3 || j == 5 || j == 7) { // create box
+            if (j=='s') { // create box
                 // Cylinder 1
-                let tmpCylinder = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * .8, boxHeight, 4);
-                let tmpCylinder2 = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * .8, boxHeight, 4);
+                let tmpCylinder = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * 1, boxHeight, 4);
+                let tmpCylinder2 = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * 1, boxHeight, 4);
 
                 let currTexture = TZAMaterial[Math.floor(Math.random() * 4)];
                 tmpCylinder.materials = [TXTMaterial[j], TXTMaterialScale2[j], currTexture];
@@ -316,34 +316,36 @@ function init() {
 
                 let tmpmesh = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
                 let tmpmesh2 = new THREE.Mesh(tmpCylinder2, tmpCylinder2.materials);
-                tmpmesh.scale.y = 1.3;
-                tmpmesh2.position.x = (boxWidth / 1.3);
-                tmpmesh2.position.z = (boxWidth / 1.3);
+                
+                tmpmesh.scale.y = 1.5;
+                tmpmesh2.position.x = (boxWidth / 1.3)*1.5;
+                tmpmesh2.position.z = (boxWidth / 1.3)*1.5;
                 // tmpmesh2.rotation.y = -80 * (Math.PI / 180);
 
                 if (j == 1) {
                     tmpmesh.rotation.z = 90 * (Math.PI / 180);
                     tmpmesh.rotation.x = 90 * (Math.PI / 180);
+                    tmpmesh.rotation.y = 45 * (Math.PI / 180);
                 }
 
-                if (j == 3) {
-                    tmpmesh.rotation.z = 0 * (Math.PI / 180);
-                    tmpmesh.rotation.x = 90 * (Math.PI / 180);
+                if (j == 2) {
+                    tmpmesh.rotation.z = 90 * (Math.PI / 180);
+                    tmpmesh.rotation.x = 0 * (Math.PI / 180);
+                    tmpmesh.rotation.y = 45 * (Math.PI / 180);
                 }
 
 
 
                 group.add(tmpmesh); //add a mesh with geometry to it
-                // group.add(tmpmesh2); //add a mesh with geometry to it
+                group.add(tmpmesh2); //add a mesh with geometry to it
 
                 meshArr[j] = group;
 
 
 
-            } else if (j == 0 || j == 2 || j == 4 || j == 6) { // create triangle cylincer
-                tmpCylinder = new THREE.CylinderGeometry(cylBase * 1.3, cylBase, boxHeight*2, 3);
+            } else if (j == 0  || j == 1 || j == 2 || j==3 || j == 4 || j == 6 || j == 8 || j == 10) { // create triangle cylincer
+                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight*2, 4);
                 tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
-
                 tmpCylinderBsp = new ThreeBSP(tmpCylinder);
 
                 // console.log(result.faces.length);
@@ -362,25 +364,28 @@ function init() {
                 cube2.rotation.z = -Math.random();
                 var cube2_bsp = new ThreeBSP(cube2);
 
+                 //cube 3 - to cut cilynder
+                var cube3 = new THREE.Mesh(sphere_geometry);
+                cube3.position.y = (boxHeight) * -0.9;
+                cube3.rotation.z = 0
+                var cube3_bsp = new ThreeBSP(cube3);
+                
+                   //cube 3 - to cut cilynder
+                var cube4 = new THREE.Mesh(sphere_geometry);
+                cube4.position.y = (boxHeight) * 0.9;
+                cube4.rotation.z = 0
+                var cube4_bsp = new ThreeBSP(cube4);
+
                 //substract cube from cylinder
-                var subtract_bsp = tmpCylinderBsp.subtract(cube2_bsp.union(cube1_bsp));
+                var subtract_bsp = tmpCylinderBsp.subtract(cube2_bsp.union(cube1_bsp.union(cube3_bsp.union(cube4_bsp))));
                 var result = subtract_bsp.toGeometry();
 
 
-                for (m = 0; m < result.faces.length; m++) {
-                    if (m < result.faces.length - 6) {
-                        result.faces[m].materialIndex = 1; // material - map
-
-                    } else {
-                        result.faces[m].materialIndex = 0; // material - color pattern
-
-                    }
-                }
-
+               
                 
-               result.materials = [TXTMaterial[1], TZAMaterial[Math.floor(Math.random() * 4)]];
+               result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < result.faces.length; m++) {
-                    if (m < result.faces.length - 6) {
+                    if (m < 6) {
                         result.faces[m].materialIndex = 1; // material - map
 
                     } else {
@@ -393,12 +398,12 @@ function init() {
             } else { // create cylinder
                 cylcount++;
                 let TMPCylHeight = boxHeight * ((Math.random() * (2.5 - 1)) + 1);
+                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, TMPCylHeight, 120);
 
                 if (j == 8 || j == 9)
-                    TMPCylHeight = boxHeight;
+                tmpCylinder = new THREE.CylinderGeometry(cylBase/1.75, cylBase/1.75, TMPCylHeight, 120);
 
-
-                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, TMPCylHeight, 120);
+                    
                 tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
                 tmpCylinderGeo.position.y = 0;
                 tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
@@ -445,9 +450,9 @@ function init() {
             meshArr[j].innitialposition.y = 100 - PosArr[j][1];
 
             meshArr[j].position.z = -(Math.random() * 800) - 1000; // for innitial fade in
-            meshArr[j].rotation.z = Math.random();
-            meshArr[j].rotation.x = Math.random();
-            meshArr[j].rotation.y = Math.random();
+            meshArr[j].rotation.z =  Math.random() - 0.5;
+            meshArr[j].rotation.x = Math.random()- 1.5;
+            meshArr[j].rotation.y = Math.random()- 0.5;
             meshArr[j].rotationnum = 0;
 
             scene.add(meshArr[j]);
