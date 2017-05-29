@@ -285,7 +285,7 @@ function init() {
 
 
 
-            if (j=='s') { // create box
+            if (j == 's') { // create box
                 // Cylinder 1
                 let tmpCylinder = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * 1, boxHeight, 4);
                 let tmpCylinder2 = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * 1, boxHeight, 4);
@@ -316,10 +316,10 @@ function init() {
 
                 let tmpmesh = new THREE.Mesh(tmpCylinder, tmpCylinder.materials);
                 let tmpmesh2 = new THREE.Mesh(tmpCylinder2, tmpCylinder2.materials);
-                
+
                 tmpmesh.scale.y = 1.5;
-                tmpmesh2.position.x = (boxWidth / 1.3)*1.5;
-                tmpmesh2.position.z = (boxWidth / 1.3)*1.5;
+                tmpmesh2.position.x = (boxWidth / 1.3) * 1.5;
+                tmpmesh2.position.z = (boxWidth / 1.3) * 1.5;
                 // tmpmesh2.rotation.y = -80 * (Math.PI / 180);
 
                 if (j == 1) {
@@ -343,8 +343,8 @@ function init() {
 
 
 
-            } else if (j == 0  || j == 1 || j == 2 || j==3 || j == 4 || j == 6 || j == 8 || j == 10) { // create triangle cylincer
-                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight*2, 4);
+            } else if (j == 0 || j == 1 || j == 2 || j == 3 || j == 4 || j == 6 || j == 8 || j == 10) { // create triangle cylincer
+                tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight * 2, 4);
                 tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
                 tmpCylinderBsp = new ThreeBSP(tmpCylinder);
 
@@ -364,13 +364,13 @@ function init() {
                 cube2.rotation.z = -Math.random();
                 var cube2_bsp = new ThreeBSP(cube2);
 
-                 //cube 3 - to cut cilynder
+                //cube 3 - to cut cilynder
                 var cube3 = new THREE.Mesh(sphere_geometry);
                 cube3.position.y = (boxHeight) * -0.9;
                 cube3.rotation.z = 0
                 var cube3_bsp = new ThreeBSP(cube3);
-                
-                   //cube 3 - to cut cilynder
+
+                //cube 3 - to cut cilynder
                 var cube4 = new THREE.Mesh(sphere_geometry);
                 cube4.position.y = (boxHeight) * 0.9;
                 cube4.rotation.z = 0
@@ -381,9 +381,9 @@ function init() {
                 var result = subtract_bsp.toGeometry();
 
 
-               
-                
-               result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * 4)]];
+
+
+                result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * 4)]];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < 12) {
                         result.faces[m].materialIndex = 1; // material - map
@@ -401,9 +401,9 @@ function init() {
                 tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, TMPCylHeight, 120);
 
                 if (j == 8 || j == 9)
-                tmpCylinder = new THREE.CylinderGeometry(cylBase/1.75, cylBase/1.75, TMPCylHeight, 120);
+                    tmpCylinder = new THREE.CylinderGeometry(cylBase / 1.75, cylBase / 1.75, TMPCylHeight, 120);
 
-                    
+
                 tmpCylinderGeo = new THREE.Mesh(tmpCylinder);
                 tmpCylinderGeo.position.y = 0;
                 tmpCylinderBsp = new ThreeBSP(tmpCylinderGeo);
@@ -450,9 +450,9 @@ function init() {
             meshArr[j].innitialposition.y = 100 - PosArr[j][1];
 
             meshArr[j].position.z = -(Math.random() * 800) - 1000; // for innitial fade in
-            meshArr[j].rotation.z =  Math.random() - 0.5;
-            meshArr[j].rotation.x = Math.random()- 1.5;
-            meshArr[j].rotation.y = Math.random()- 0.5;
+            meshArr[j].rotation.z = Math.random() - 0.5;
+            meshArr[j].rotation.x = Math.random() - 1.5;
+            meshArr[j].rotation.y = Math.random() - 0.5;
             meshArr[j].rotationnum = 0;
 
             scene.add(meshArr[j]);
@@ -503,6 +503,7 @@ function exitAnimation() {
 }
 
 
+var screenBorders = {}
 
 function onWindowResize() {
 
@@ -512,6 +513,7 @@ function onWindowResize() {
     screenHeight = window.innerHeight;
 
     let scaleFactor = 0.8 + (screenWidth / windowWidth) * 0.1;
+
 
 
 
@@ -527,19 +529,24 @@ function onWindowResize() {
 
         }
 
+        screenBorders.bottomX = 1.2 * ((0 / 100) * screenWidth - (screenWidth / 2));
+        screenBorders.topX = 1.2 * ((1) * screenWidth - (screenWidth / 2));
+        screenBorders.bottomY = ((0 / 100) * screenHeight - (screenHeight / 2));
+        screenBorders.topY = ((100 / 100) * screenHeight - (screenHeight / 2));
 
-     
 
 
-        
+
+
+
     } else {
         // take care of mobile resize event
-        
+
     }
-       camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+
 }
 
 function distanceVector(v1, v2) {
@@ -587,21 +594,32 @@ function onDocumentMouseMove(event) {
 
             for (j = 0; j < BoxesNumber; j++) {
 
+                // getting the ovject position into an object
                 let tmpObjPso = new THREE.Vector3();
                 tmpObjPso.x = meshArr[j].positionAfterResize.x;
                 tmpObjPso.y = meshArr[j].positionAfterResize.y;
+
+                // getting the distance vector between mouse and object              
                 mouseRelations[j] = distanceVector(MousePos, tmpObjPso);
 
+                // getting the distance length             
                 let currdistance = Math.sqrt(mouseRelations[j].x * mouseRelations[j].x + mouseRelations[j].y * mouseRelations[j].y);
 
-
+                //messuring the influence of the mouse by distance
                 let Influence = Math.pow(Math.max(1 - currdistance / mousePullStrength, 0), 2);
 
+                // new value is the innitial position of the mouse plus influence (0-1) times relations (vector of mouse from the innitial position)
+                let newXpos = meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y;
+                let newYpos = meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x;
+
+                // Clamping the new value between the borders
+                newXpos = Math.min(Math.max(newXpos, screenBorders.bottomX), screenBorders.topX);
+                newYpos = Math.min(Math.max(newYpos, screenBorders.bottomY), screenBorders.topY);
 
                 // Tween to new position
                 new TWEEN.Tween(meshArr[j].position).to({
-                        x: (meshArr[j].positionAfterResize.x + Influence * mouseRelations[j].y),
-                        y: (meshArr[j].positionAfterResize.y + Influence * mouseRelations[j].x)
+                        x: newXpos,
+                        y: newYpos
                     }, mousePullStrengthTimeout)
                     .easing(TWEEN.Easing.Cubic.Out).start();
             }
@@ -654,15 +672,15 @@ function animate() {
 
     if (!isMobile) {
         for (j = 0; j < BoxesNumber; j++) {
-              if (j % 2) { // continuous rotation for Y-Z 
-                        meshArr[j].rotation.y += (0.05 * (Math.PI / 180));
-                        meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
+            if (j % 2) { // continuous rotation for Y-Z 
+                meshArr[j].rotation.y += (0.05 * (Math.PI / 180));
+                meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
 
 
-                    } else { // continuous rotation for Y-Z 
-                  meshArr[j].rotation.x += (0.1 * (Math.PI / 180));
-                        meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
-                    }
+            } else { // continuous rotation for Y-Z 
+                meshArr[j].rotation.x += (0.1 * (Math.PI / 180));
+                meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
+            }
 
             // Continues movement
             if (mouseRelations[j]) {
@@ -683,15 +701,15 @@ function animate() {
                     }
                 } else {
 
-                 
-                  
+
+
 
                 }
             }
 
         }
         camera.lookAt(scene.position);
-        
+
     } else {
         // Update mobile gyro controler
         controls.update();
