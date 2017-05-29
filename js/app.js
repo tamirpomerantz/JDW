@@ -64,7 +64,7 @@ var txtArr = [
     'img/t5.jpg'
 ];
 
-var TZAtxtArr = ['img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'];
+var TZAtxtArr = ['img/check5.jpg', 'img/check6.jpg', 'img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'];
 var TZAMaterial = [];
 var TXTMaterial = [];
 var TXTMaterialScale2 = [];
@@ -345,7 +345,7 @@ function init() {
 
             } else if (j == 0 || j == 1 || j == 2 || j == 3 || j == 4 || j == 6 || j == 8 || j == 10) { // create triangle cylincer
                 tmpCylinder = new THREE.CylinderGeometry(cylBase, cylBase, boxHeight * 2, 4);
-                tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * 4)]];
+                tmpCylinder.materials = [TXTMaterial[j], TZAMaterial[Math.floor(Math.random() * TZAMaterial.length)]];
                 tmpCylinderBsp = new ThreeBSP(tmpCylinder);
 
                 // console.log(result.faces.length);
@@ -383,7 +383,7 @@ function init() {
 
 
 
-                result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * 4)]];
+                result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * TZAMaterial.length)]];
                 for (m = 0; m < result.faces.length; m++) {
                     if (m < 12) {
                         result.faces[m].materialIndex = 1; // material - map
@@ -504,6 +504,9 @@ function exitAnimation() {
 
 
 var screenBorders = {}
+var globalPosTween;
+
+var isMouseAnimating = false;
 
 function onWindowResize() {
 
@@ -514,25 +517,43 @@ function onWindowResize() {
 
     let scaleFactor = 0.8 + (screenWidth / windowWidth) * 0.1;
 
-
-
+// var isResize = false;
 
     // camDist / 2
     if (!isMobile) {
+        // isMouseAnimating = false;
+        // if (isResize) {
+        //     // globalPosTween.stop()
+        //     mouse.x = screenWidth / 2;
+        //     mouse.y = screenHeight / 2;
+        // }
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
             meshArr[i].positionAfterResize.x = 1.2 * ((meshArr[i].innitialposition.x / 100) * screenWidth - (screenWidth / 2));
             meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y / 100) * screenHeight - (screenHeight / 2));
 
-            meshArr[i].position.x = meshArr[i].positionAfterResize.x;
-            meshArr[i].position.y = meshArr[i].positionAfterResize.y;
+            meshArr[i].position.x = meshArr[i].positionAfterResize.x,
+                meshArr[i].position.y = meshArr[i].positionAfterResize.y
+                // mousePullStrengthTimeout = 50;
+                // isResize=true;
+            // var resizetween = new TWEEN.Tween(meshArr[i].position).to({
+            //         x: meshArr[i].positionAfterResize.x,
+            //         y: meshArr[i].positionAfterResize.y
+            //     }, 1000)
+            //     .easing(TWEEN.Easing.Cubic.Out).start()
+            //     .onComplete(function () {
+            //     });
+
+
+
 
         }
 
-        screenBorders.bottomX = 1.2 * ((0 / 100) * screenWidth - (screenWidth / 2));
-        screenBorders.topX = 1.2 * ((1) * screenWidth - (screenWidth / 2));
-        screenBorders.bottomY = ((0 / 100) * screenHeight - (screenHeight / 2));
-        screenBorders.topY = ((100 / 100) * screenHeight - (screenHeight / 2));
+
+        screenBorders.bottomX = -(screenWidth / 2) * 0.9;
+        screenBorders.topX = (screenWidth / 2) * 0.9;
+        screenBorders.bottomY = -(screenHeight / 2) * 0.9;
+        screenBorders.topY = (screenHeight / 2) * 0.9;
 
 
 
@@ -617,11 +638,26 @@ function onDocumentMouseMove(event) {
                 newYpos = Math.min(Math.max(newYpos, screenBorders.bottomY), screenBorders.topY);
 
                 // Tween to new position
-                new TWEEN.Tween(meshArr[j].position).to({
+
+                // if (isResize) {
+                //     mousePullStrengthTimeout = 100;
+                // }
+                globalPosTween = new TWEEN.Tween(meshArr[j].position).to({
                         x: newXpos,
                         y: newYpos
                     }, mousePullStrengthTimeout)
-                    .easing(TWEEN.Easing.Cubic.Out).start();
+                    .easing(TWEEN.Easing.Cubic.Out).start()
+                    .onUpdate(function () {
+
+                    })
+                    .onComplete(function () {
+                //         if (isResize)
+                //     {
+                //             isResize = false;
+                // mousePullStrengthTimeout = 15000;    
+                // }
+                    });
+
             }
         }
 
