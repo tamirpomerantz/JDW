@@ -12,13 +12,13 @@ var BoxesNumber = 13;
 var mouseMoveInterval = 350; // This is for the "jumping" animation. 
 var mouseRelations = []; // Arr to keep distance from mouse pointer.
 
+
+// Bounding of shapes on screen
 var borderWidth = 70;
 var percentOfScreenX = 1;
 var percentOfScreenY = 0.8;
 
-
-var PosArr = [];
-PosArr = [
+var PosArr = [
     [90, 36, 0],
     [0, 66, 0],
     [68, 90, 0],
@@ -35,24 +35,13 @@ PosArr = [
 ];
 
 
-// Random positions of rocks
-
-// for (j=0;j<BoxesNumber;j++)
-// {
-//     let tmpX = Math.floor((Math.random() * 100));
-//     let tmpY = Math.floor((Math.random() * 100));
-//     let tmpZ = Math.floor((Math.random() * 100)-50);
-// PosArr.push([tmpX,tmpY,tmpZ]);
-// console.log('['+tmpX+','+tmpY+','+tmpZ+',],');
-// }
-
-
 // Detect mobile
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 640) {
     var isMobile = true;
 }
 
 // Creation of texture materials
+
 var txtArr = [
     'img/t2.jpg',
     'img/t3.jpg',
@@ -62,157 +51,83 @@ var txtArr = [
     'img/t7.jpg',
     'img/t8.jpg',
     'img/t9.jpg',
-    'img/t2.jpg',
-    'img/t3.jpg',
-    'img/t4.jpg',
-    'img/t5.jpg'
+    'img/check5.jpg', 'img/check6.jpg', 'img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'
 ];
 
-var TZAtxtArr = ['img/check5.jpg', 'img/check6.jpg', 'img/check1.jpg', 'img/check2.jpg', 'img/check3.jpg', 'img/check4.jpg'];
+
 var TZAMaterial = [];
 var TXTMaterial = [];
 var TXTMaterialScale2 = [];
 
-
-for (let i = 0; i < TZAtxtArr.length; i++) {
-    let TZATexture = new THREE.TextureLoader().load(TZAtxtArr[i],);
-    TZATexture.anisotropy = 4;
-    TZATexture.repeat.set(1, 1);
-    TZATexture.offset.set(0.001, 0.001);
-    TZATexture.wrapS = TZATexture.wrapT = THREE.RepeatWrapping;
-    TZATexture.format = TZATexture.RGBFormat;
-    TZAMaterial[i] = new THREE.MeshPhongMaterial({
-        map: TZATexture,
-        specular: 0x222222,
-        shininess: 20,
-        bumpMap: TZATexture,
-        bumpScale: 2
-    })
-}
-
-
-// Floating box textures
-
-var TXTBoxSideMaterial = [];
-var TXTBoxSQMaterial = [];
-var txtBoxSideArr = ['img/BOX-SIDE-01.jpg', 'img/BOX-SIDE-02.jpg', 'img/BOX-SIDE-03.jpg'];
-
-
-
-    // for (let i = 0; i < txtArr.length; i++) {
-
-
-    //     var loader = new THREE.TextureLoader();
-    //     loader.load(txtArr[i],
-    //         function (texture) {
-    //             // all loaded
-    //             loaderCount++;
-    //             console.log('loaded ' + txtArr[i])
-                
-
-    //             if (loaderCount == txtArr.length) {
-    //                 EnterAnimation();
-    //                 console.log(TXTMaterial);
-    //             }
-
-
-
-    //         });
-    // }
-
-
-
-////////// promise code
 var allPromises = [];
- var loader = new THREE.TextureLoader();
-txtArr.forEach( function( txtArrURL ) {
+var loader = new THREE.TextureLoader();
+txtArr.forEach(function (txtArrURL) {
 
-    allPromises.push( new Promise( function( resolve, reject ) {
+    allPromises.push(new Promise(function (resolve, reject) {
 
         loader.load(
-           txtArrURL,
+            txtArrURL,
+            function (texture) {
+                // if texture is B&W
+               if (texture.image.currentSrc.includes("check")) {
+                    texture.anisotropy = 4;
+                    texture.repeat.set(1, 1);
+                    texture.offset.set(0.001, 0.001);
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                    // texture.format = texture.RGBFormat;
+                    material = new THREE.MeshPhongMaterial({
+                        map: texture,
+                        specular: 0x222222,
+                        shininess: 20,
+                        bumpMap: texture,
+                        bumpScale: 2
+                    });
+                    //  material = new THREE.MeshBasicMaterial({
+                    //     map: texture,
+                    //     overdraw: true
+                    // });
+                    TZAMaterial.push(material);
 
-           function( texture ) {
-               // Success callback of TextureLoader
-            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                texture.offset.set(0, 0);
-                texture.repeat.set(1, 1);
-                material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    overdraw: true
-                });
-               TXTMaterial.push( material );
 
-               // We're done, so tell the promise it is complete
-               resolve( material );
-           },
+                } else {
+                    // console.log(texture)
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                    texture.offset.set(0, 0);
+                    texture.repeat.set(1, 1);
+                    material = new THREE.MeshBasicMaterial({
+                        map: texture,
+                        overdraw: true
+                    });
+                    TXTMaterial.push(material);
 
-           function( xhr ) {
-               // Progress callback of TextureLoader
-               // ...
-           },
+                   
 
-           function( xhr ) {
-               // Failure callback of TextureLoader
-               // Reject the promise with the failure
-               reject( new Error( 'Could not load ') );
-           }
+                }
+ resolve(material);
+                // if texture is color
+
+            }
         );
 
     }));
 
 });
 
-Promise.all( allPromises )
-    .then( function( arrayOfMaterials ) {
-       let time = 0;
-init();
-animate();
-       console.log(TXTMaterial);
+Promise.all(allPromises)
+    .then(function (arrayOfMaterials) {
+        let time = 0;
+        init();
+        animate();
+    }, function (error) {
 
-    }, function( error ) {
-        console.error( "Could not load all textures:", error );
+        // error
+        console.error("Could not load all textures:", error);
     });
-///////// end of promise code
 
 
-
-for (let i = 0; i < txtBoxSideArr.length; i++) {
-    // Box side
-    let textureBoxSideArr = new THREE.TextureLoader().load(txtBoxSideArr[i]);
-    textureBoxSideArr.wrapS = textureBoxSideArr.wrapT = THREE.RepeatWrapping;
-    textureBoxSideArr.repeat.set(1, 0.666666);
-    textureBoxSideArr.offset.set(0, 0.33333);
-    TXTBoxSideMaterial[i] = new THREE.MeshBasicMaterial({
-        map: textureBoxSideArr,
-        overdraw: true
-    });
-    // Box square
-    let textureBoxSQ = new THREE.TextureLoader().load(txtBoxSideArr[i]);
-    textureBoxSQ.wrapS = textureBoxSQ.wrapT = THREE.RepeatWrapping;
-    textureBoxSQ.repeat.set(1, 0.333);
-    textureBoxSQ.offset.set(0, 0);
-    TXTBoxSQMaterial[i] = new THREE.MeshBasicMaterial({
-        map: textureBoxSQ,
-        overdraw: true
-    });
-}
-
-
-
-function createMaterialBox(j) {
-    var materials = [
-        TZAMaterial[j],
-        TXTBoxSideMaterial[j],
-        TXTBoxSQMaterial[j]
-    ];
-    return materials;
-}
 
 
 function createMaterialsMobile() {
-
-
     var newTZATexture = new THREE.TextureLoader().load('img/check1.jpg');
     newTZATexture.anisotropy = 4;
     newTZATexture.repeat.set(0.5, 2);
@@ -237,9 +152,6 @@ function createMaterialsMobile() {
     boxColorTxtSquare.repeat.set(1, 1);
     boxColorTxtSquare.offset.set(0.001, 0.001);
     boxColorTxtSquare.wrapS = boxColorTxtSquare.wrapT = THREE.RepeatWrapping;
-
-
-
 
     var materials = [
         new THREE.MeshBasicMaterial({
@@ -317,7 +229,6 @@ function init() {
 
 
     if (isMobile) {
-
         let globalBaflaTilt = -25 * (Math.PI / 180);
         for (j = 0; j < 3; j++) {
             boxArr[j] = new THREE.BoxBufferGeometry(40, 170, 50);
@@ -525,10 +436,13 @@ function init() {
             scene.add(meshArr[j]);
 
         }
-        
-    }
 
-       EnterAnimation();
+    }
+    if (!isMobile)
+    {
+    EnterAnimation();
+
+    }
 
     scene.updateMatrixWorld(true);
     onWindowResize();
@@ -840,4 +754,3 @@ function render() {
     renderer.render(scene, camera);
 
 }
-
