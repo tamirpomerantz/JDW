@@ -12,6 +12,10 @@ var BoxesNumber = 13;
 var mouseMoveInterval = 350; // This is for the "jumping" animation. 
 var mouseRelations = []; // Arr to keep distance from mouse pointer.
 
+var borderWidth = 70;
+var percentOfScreenX = 1;
+var percentOfScreenY = 0.8;
+
 
 var PosArr = [];
 PosArr = [
@@ -512,12 +516,12 @@ function onWindowResize() {
 
     // Resize - responsive regrouping of objects
 
-    screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight;
+    screenWidth = window.innerWidth - (borderWidth / 2);
+    screenHeight = window.innerHeight - (borderWidth / 2);
 
-    let scaleFactor = 0.8 + (screenWidth / windowWidth) * 0.1;
+    let scaleFactor = 0.74 + (screenWidth / windowWidth) * 0.1;
 
-// var isResize = false;
+    // var isResize = false;
 
     // camDist / 2
     if (!isMobile) {
@@ -529,13 +533,13 @@ function onWindowResize() {
         // }
         for (let i = 0; i < meshArr.length; i++) {
             meshArr[i].scale.set(scaleFactor, scaleFactor, scaleFactor);
-            meshArr[i].positionAfterResize.x = 1.2 * ((meshArr[i].innitialposition.x / 100) * screenWidth - (screenWidth / 2));
+            meshArr[i].positionAfterResize.x = ((meshArr[i].innitialposition.x / 100) * screenWidth - (screenWidth / 2));
             meshArr[i].positionAfterResize.y = ((meshArr[i].innitialposition.y / 100) * screenHeight - (screenHeight / 2));
 
             meshArr[i].position.x = meshArr[i].positionAfterResize.x,
                 meshArr[i].position.y = meshArr[i].positionAfterResize.y
-                // mousePullStrengthTimeout = 50;
-                // isResize=true;
+            // mousePullStrengthTimeout = 50;
+            // isResize=true;
             // var resizetween = new TWEEN.Tween(meshArr[i].position).to({
             //         x: meshArr[i].positionAfterResize.x,
             //         y: meshArr[i].positionAfterResize.y
@@ -550,10 +554,10 @@ function onWindowResize() {
         }
 
 
-        screenBorders.bottomX = -(screenWidth / 2) * 0.9;
-        screenBorders.topX = (screenWidth / 2) * 0.9;
-        screenBorders.bottomY = -(screenHeight / 2) * 0.9;
-        screenBorders.topY = (screenHeight / 2) * 0.9;
+        screenBorders.bottomX = -(screenWidth / 2) * percentOfScreenX;
+        screenBorders.topX = (screenWidth / 2) * percentOfScreenX;
+        screenBorders.bottomY = -(screenHeight / 2) * percentOfScreenY;
+        screenBorders.topY = (screenHeight / 2) * percentOfScreenY;
 
 
 
@@ -651,11 +655,11 @@ function onDocumentMouseMove(event) {
 
                     })
                     .onComplete(function () {
-                //         if (isResize)
-                //     {
-                //             isResize = false;
-                // mousePullStrengthTimeout = 15000;    
-                // }
+                        //         if (isResize)
+                        //     {
+                        //             isResize = false;
+                        // mousePullStrengthTimeout = 15000;    
+                        // }
                     });
 
             }
