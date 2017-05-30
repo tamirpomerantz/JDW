@@ -13,6 +13,25 @@ var mouseMoveInterval = 350; // This is for the "jumping" animation.
 var mouseRelations = []; // Arr to keep distance from mouse pointer.
 
 
+var boxArr = [];
+
+var meshArr = [];
+var maxSize = 90;
+var minSize = 70;
+var boxWidth, boxHeight, boxDepth;
+
+var tmpCylinder;
+var tmpSphere;
+
+var cylcount = 0
+var camDist = 1500;
+
+if (isMobile)
+    camDist = 500;
+
+var loaderCount = 0;
+
+
 // Bounding of shapes on screen
 var borderWidth = 70;
 var percentOfScreenX = 1;
@@ -59,69 +78,80 @@ var TZAMaterial = [];
 var TXTMaterial = [];
 var TXTMaterialScale2 = [];
 
-var allPromises = [];
-var loader = new THREE.TextureLoader();
-txtArr.forEach(function (txtArrURL) {
 
-    // create a new promise
-    allPromises.push(new Promise(function (resolve, reject) {
 
-        loader.load(
-            txtArrURL,
-            function (texture) {
-                // if texture is B&W
-                if (texture.image.currentSrc.includes("check")) {
-                    texture.anisotropy = 4;
-                    texture.repeat.set(1, 1);
-                    texture.offset.set(0.001, 0.001);
-                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                    material = new THREE.MeshPhongMaterial({
-                        map: texture,
-                        specular: 0x222222,
-                        shininess: 20,
-                        bumpMap: texture,
-                        bumpScale: 2
-                    });
 
-                    TZAMaterial.push(material);
-                } else {
-                    // if texture is color
-                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                    texture.offset.set(0, 0);
-                    texture.repeat.set(1, 1);
-                    material = new THREE.MeshBasicMaterial({
-                        map: texture,
-                        overdraw: true
-                    });
-                    TXTMaterial.push(material);
+if (!isMobile) {
+
+    var allPromises = [];
+    var loader = new THREE.TextureLoader();
+    txtArr.forEach(function (txtArrURL) {
+
+        // create a new promise
+        allPromises.push(new Promise(function (resolve, reject) {
+
+            loader.load(
+                txtArrURL,
+                function (texture) {
+                    // if texture is B&W
+                    if (texture.image.currentSrc.includes("check")) {
+                        texture.anisotropy = 4;
+                        texture.repeat.set(1, 1);
+                        texture.offset.set(0.001, 0.001);
+                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                        material = new THREE.MeshPhongMaterial({
+                            map: texture,
+                            specular: 0x222222,
+                            shininess: 20,
+                            bumpMap: texture,
+                            bumpScale: 2
+                        });
+
+                        TZAMaterial.push(material);
+                    } else {
+                        // if texture is color
+                        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                        texture.offset.set(0, 0);
+                        texture.repeat.set(1, 1);
+                        material = new THREE.MeshBasicMaterial({
+                            map: texture,
+                            overdraw: true
+                        });
+                        TXTMaterial.push(material);
+                    }
+
+                    // close this promise after creating the material
+                    resolve(material);
+
                 }
+            );
 
-                // close this promise after creating the material
-                resolve(material);
+        }));
 
-            }
-        );
-
-    }));
-
-});
-
-Promise.all(allPromises)
-    .then(function (arrayOfMaterials) {
-// hide preloader
-
-document.getElementsByClassName('preloader')[0].className += ' preloader--hide';
-
-
-        init();
-        animate();
-    }, function (error) {
-
-        // error
-        console.error("Could not load all textures:", error);
     });
 
+    Promise.all(allPromises)
+        .then(function (arrayOfMaterials) {
+            // hide preloader
+            document.getElementsByClassName('preloader')[0].className += ' preloader--hide';
 
+            init();
+            animate();
+        }, function (error) {
+
+            // error
+            console.error("Could not load all textures:", error);
+        });
+
+
+
+} else {
+    init();
+    animate();
+    document.getElementsByClassName('preloader')[0].className += ' preloader--hide';
+
+
+}
 
 
 function createMaterialsMobile() {
@@ -182,23 +212,6 @@ function createMaterialsMobile() {
     return materials;
 }
 
-var boxArr = [];
-
-var meshArr = [];
-var maxSize = 90;
-var minSize = 70;
-var boxWidth, boxHeight, boxDepth;
-
-var tmpCylinder;
-var tmpSphere;
-
-var cylcount = 0
-var camDist = 1500;
-
-if (isMobile)
-    camDist = 500;
-
-var loaderCount = 0;
 
 function init() {
 
@@ -467,25 +480,37 @@ function EnterAnimation() {
 
 function exitAnimation() {
     if (isAnimationOn) {
-        for (j = 0; j < BoxesNumber; j++) {
-            new TWEEN.Tween(meshArr[j].position).to({
-                    z: -300
-                }, 2000 + Math.random() * 4000)
-                .easing(TWEEN.Easing.Elastic.Out).start();
-            new TWEEN.Tween(meshArr[j].scale).to({
-                    z: 0,
-                    y: 0,
-                    x: 0
-                }, 1000)
-                .easing(TWEEN.Easing.Elastic.Out).start()
-                .onComplete(function () {
-                    scene.remove(meshArr[j]);
-                });
+        if (isMobile) {
+
+for (j = 0; j < BoxesNumber; j++) {
+                        scene.remove(meshArr[j]);
+
+}
 
 
+        } else {
+
+            for (j = 0; j < BoxesNumber; j++) {
+                new TWEEN.Tween(meshArr[j].position).to({
+                        z: -300
+                    }, 2000 + Math.random() * 4000)
+                    .easing(TWEEN.Easing.Elastic.Out).start();
+                new TWEEN.Tween(meshArr[j].scale).to({
+                        z: 0,
+                        y: 0,
+                        x: 0
+                    }, 1000)
+                    .easing(TWEEN.Easing.Elastic.Out).start()
+                    .onComplete(function () {
+                        scene.remove(meshArr[j]);
+                    });
+
+
+            }
+            isAnimationOn = false;
         }
-        isAnimationOn = false;
     }
+
 
 }
 
@@ -692,7 +717,11 @@ function onDocumentMouseMove(event) {
 
 
 function animate() {
+    // if (isAnimationOn)
+    // {
 
+
+    // }
     requestAnimationFrame(animate);
 
     if (!isMobile) {
