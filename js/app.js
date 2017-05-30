@@ -63,18 +63,18 @@ var allPromises = [];
 var loader = new THREE.TextureLoader();
 txtArr.forEach(function (txtArrURL) {
 
+    // create a new promise
     allPromises.push(new Promise(function (resolve, reject) {
 
         loader.load(
             txtArrURL,
             function (texture) {
                 // if texture is B&W
-               if (texture.image.currentSrc.includes("check")) {
+                if (texture.image.currentSrc.includes("check")) {
                     texture.anisotropy = 4;
                     texture.repeat.set(1, 1);
                     texture.offset.set(0.001, 0.001);
                     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                    // texture.format = texture.RGBFormat;
                     material = new THREE.MeshPhongMaterial({
                         map: texture,
                         specular: 0x222222,
@@ -82,15 +82,10 @@ txtArr.forEach(function (txtArrURL) {
                         bumpMap: texture,
                         bumpScale: 2
                     });
-                    //  material = new THREE.MeshBasicMaterial({
-                    //     map: texture,
-                    //     overdraw: true
-                    // });
+
                     TZAMaterial.push(material);
-
-
                 } else {
-                    // console.log(texture)
+                    // if texture is color
                     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
                     texture.offset.set(0, 0);
                     texture.repeat.set(1, 1);
@@ -99,12 +94,10 @@ txtArr.forEach(function (txtArrURL) {
                         overdraw: true
                     });
                     TXTMaterial.push(material);
-
-                   
-
                 }
- resolve(material);
-                // if texture is color
+
+                // close this promise after creating the material
+                resolve(material);
 
             }
         );
@@ -115,7 +108,11 @@ txtArr.forEach(function (txtArrURL) {
 
 Promise.all(allPromises)
     .then(function (arrayOfMaterials) {
-        let time = 0;
+// hide preloader
+
+document.getElementsByClassName('preloader')[0].className += ' preloader--hide';
+
+
         init();
         animate();
     }, function (error) {
@@ -438,9 +435,8 @@ function init() {
         }
 
     }
-    if (!isMobile)
-    {
-    EnterAnimation();
+    if (!isMobile) {
+        EnterAnimation();
 
     }
 

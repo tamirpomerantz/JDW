@@ -32,6 +32,7 @@
             position: fixed;
             z-index: 10;
         }
+
         .border {
             position: fixed;
             border: 70px solid #fff;
@@ -48,24 +49,100 @@
             display: flex;
             font-family: 'Simpler';
             top: 0px;
-            left:0px;
-            height:100%;
+            left: 0px;
+            height: 100%;
             width: 100%;
             align-items: center;
             justify-content: center;
             z-index: 1;
         }
-@media (max-width: 600px) {
-.border { 
-    display: none;
-  }
-}
 
+        .preloader {
+            position: fixed;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+            height: 100px;
+            width: 100px;
+            z-index: 100;
+            /*background:lime;*/
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .preloader.preloader--hide {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        @media (max-width: 600px) {
+            .border {
+                display: none;
+            }
+        }
+        /*preloader*/
+
+        .spinner {
+            margin: 100px auto 0;
+            width: 70px;
+            text-align: center;
+        }
+
+        .spinner>div {
+            width: 18px;
+            height: 18px;
+            background-color: #333;
+
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+        @-webkit-keyframes sk-bouncedelay {
+            0%,
+            80%,
+            100% {
+                -webkit-transform: scale(0)
+            }
+            40% {
+                -webkit-transform: scale(1.0)
+            }
+        }
+
+        @keyframes sk-bouncedelay {
+            0%,
+            80%,
+            100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+            40% {
+                -webkit-transform: scale(1.0);
+                transform: scale(1.0);
+            }
+        }
     </style>
 </head>
 
 <body id="top" ng-class="{'body--dialog-open':(selectedIndex.current != -1)}" ng-controller="index">
     <div class="border"></div>
+    <div class="preloader">
+        <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+        </div>
+    </div>
     <div class="float">
         <svg width="757px" height="210px" viewBox="0 0 757 210" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs>
