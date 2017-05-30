@@ -74,30 +74,8 @@ var TXTMaterial = [];
 var TXTMaterialScale2 = [];
 
 
-for (let i = 0; i < txtArr.length; i++) {
-    let TMPtexture = new THREE.TextureLoader().load(txtArr[i]);
-    TMPtexture.wrapS = TMPtexture.wrapT = THREE.RepeatWrapping;
-    TMPtexture.offset.set(0, 0);
-    TMPtexture.repeat.set(1, 1);
-
-    let TMPtextureScale2 = new THREE.TextureLoader().load(txtArr[i]);
-    TMPtextureScale2.wrapS = TMPtextureScale2.wrapT = THREE.RepeatWrapping;
-    TMPtextureScale2.offset.set(0, 0);
-    TMPtextureScale2.repeat.set(0.5, 0.5);
-
-
-    TXTMaterial[i] = new THREE.MeshBasicMaterial({
-        map: TMPtexture,
-        overdraw: true
-    });
-    TXTMaterialScale2[i] = new THREE.MeshBasicMaterial({
-        map: TMPtextureScale2,
-        overdraw: true
-    });
-}
-
 for (let i = 0; i < TZAtxtArr.length; i++) {
-    let TZATexture = new THREE.TextureLoader().load(TZAtxtArr[i]);
+    let TZATexture = new THREE.TextureLoader().load(TZAtxtArr[i],);
     TZATexture.anisotropy = 4;
     TZATexture.repeat.set(1, 1);
     TZATexture.offset.set(0.001, 0.001);
@@ -118,6 +96,86 @@ for (let i = 0; i < TZAtxtArr.length; i++) {
 var TXTBoxSideMaterial = [];
 var TXTBoxSQMaterial = [];
 var txtBoxSideArr = ['img/BOX-SIDE-01.jpg', 'img/BOX-SIDE-02.jpg', 'img/BOX-SIDE-03.jpg'];
+
+
+
+    // for (let i = 0; i < txtArr.length; i++) {
+
+
+    //     var loader = new THREE.TextureLoader();
+    //     loader.load(txtArr[i],
+    //         function (texture) {
+    //             // all loaded
+    //             loaderCount++;
+    //             console.log('loaded ' + txtArr[i])
+                
+
+    //             if (loaderCount == txtArr.length) {
+    //                 EnterAnimation();
+    //                 console.log(TXTMaterial);
+    //             }
+
+
+
+    //         });
+    // }
+
+
+
+////////// promise code
+var allPromises = [];
+ var loader = new THREE.TextureLoader();
+txtArr.forEach( function( txtArrURL ) {
+
+    allPromises.push( new Promise( function( resolve, reject ) {
+
+        loader.load(
+           txtArrURL,
+
+           function( texture ) {
+               // Success callback of TextureLoader
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                texture.offset.set(0, 0);
+                texture.repeat.set(1, 1);
+                material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    overdraw: true
+                });
+               TXTMaterial.push( material );
+
+               // We're done, so tell the promise it is complete
+               resolve( material );
+           },
+
+           function( xhr ) {
+               // Progress callback of TextureLoader
+               // ...
+           },
+
+           function( xhr ) {
+               // Failure callback of TextureLoader
+               // Reject the promise with the failure
+               reject( new Error( 'Could not load ') );
+           }
+        );
+
+    }));
+
+});
+
+Promise.all( allPromises )
+    .then( function( arrayOfMaterials ) {
+       let time = 0;
+init();
+animate();
+       console.log(TXTMaterial);
+
+    }, function( error ) {
+        console.error( "Could not load all textures:", error );
+    });
+///////// end of promise code
+
+
 
 for (let i = 0; i < txtBoxSideArr.length; i++) {
     // Box side
@@ -231,7 +289,10 @@ var camDist = 1500;
 if (isMobile)
     camDist = 500;
 
+var loaderCount = 0;
+
 function init() {
+
     raycaster = new THREE.Raycaster(); // create once
     mouse = new THREE.Vector2(); // create once
 
@@ -295,8 +356,8 @@ function init() {
                 let tmpCylinder2 = new THREE.CylinderGeometry((boxWidth / 1.3), (boxWidth / 1.3) * 1, boxHeight, 4);
 
                 let currTexture = TZAMaterial[Math.floor(Math.random() * 4)];
-                tmpCylinder.materials = [TXTMaterial[j], TXTMaterialScale2[j], currTexture];
-                tmpCylinder2.materials = [TXTMaterial[2], TXTMaterialScale2[2], currTexture];
+                tmpCylinder.materials = [TXTMaterial[j], TXTMaterial[j], currTexture];
+                tmpCylinder2.materials = [TXTMaterial[2], TXTMaterial[j], currTexture];
 
                 for (m = 0; m < tmpCylinder.faces.length; m++) {
                     if (m == 0 || m == 1 || m == 4 || m == 5) {
@@ -459,16 +520,15 @@ function init() {
             meshArr[j].rotation.y = Math.random() - 0.5;
             meshArr[j].rotationnum = 0;
 
+            meshArr[j].material.map.needsUpdate = true;
+
             scene.add(meshArr[j]);
 
-            // do fade in
-            new TWEEN.Tween(meshArr[j].position).to({
-                    z: PosArr[j][2]
-                }, 2000 + Math.random() * 1000)
-                .easing(TWEEN.Easing.Circular.Out).start();
         }
+        
     }
 
+       EnterAnimation();
 
     scene.updateMatrixWorld(true);
     onWindowResize();
@@ -481,6 +541,19 @@ function init() {
 
 
 isAnimationOn = true;
+
+
+function EnterAnimation() {
+
+    // do fade in
+    for (j = 0; j < BoxesNumber; j++) {
+
+        new TWEEN.Tween(meshArr[j].position).to({
+                z: PosArr[j][2]
+            }, 2000 + Math.random() * 1000)
+            .easing(TWEEN.Easing.Circular.Out).start();
+    }
+}
 
 function exitAnimation() {
     if (isAnimationOn) {
@@ -600,6 +673,8 @@ var mousePullStrengthTimeout = 15000;
 
 function onDocumentMouseMove(event) {
 
+
+    // console.log(event.clientX,event.clientY)
     if (!isMobile) {
 
         //get mouse positoin
@@ -766,6 +841,3 @@ function render() {
 
 }
 
-let time = 0;
-init();
-animate();
