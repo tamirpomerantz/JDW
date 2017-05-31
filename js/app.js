@@ -243,7 +243,7 @@ function init() {
 
     if (isMobile) {
         let globalBaflaTilt = -25 * (Math.PI / 180);
-        for (j = 0; j < 3; j++) {
+        for (let j = 0; j < 3; j++) {
             boxArr[j] = new THREE.BoxBufferGeometry(40, 170, 50);
             meshArr[j] = new THREE.Mesh(boxArr[j], createMaterialsMobile());
             meshArr[j].position.z = (j * 60) - 60;
@@ -266,7 +266,7 @@ function init() {
 
 
     } else {
-        for (j = 0; j < BoxesNumber; j++) {
+        for (let j = 0; j < BoxesNumber; j++) {
 
             boxWidth = Math.floor((Math.random() * (maxSize - minSize)) + minSize)
             boxHeight = 200;
@@ -283,7 +283,7 @@ function init() {
                 tmpCylinder.materials = [TXTMaterial[j], TXTMaterial[j], currTexture];
                 tmpCylinder2.materials = [TXTMaterial[2], TXTMaterial[j], currTexture];
 
-                for (m = 0; m < tmpCylinder.faces.length; m++) {
+                for (let m = 0; m < tmpCylinder.faces.length; m++) {
                     if (m == 0 || m == 1 || m == 4 || m == 5) {
                         tmpCylinder.faces[m].materialIndex = 0; // side 2
                         tmpCylinder2.faces[m].materialIndex = 0; // side 2
@@ -373,7 +373,7 @@ function init() {
 
 
                 result.materials = [TXTMaterial[Math.floor(Math.random() * 4)], TZAMaterial[Math.floor(Math.random() * TZAMaterial.length)]];
-                for (m = 0; m < result.faces.length; m++) {
+                for (let m = 0; m < result.faces.length; m++) {
                     if (m < 12) {
                         result.faces[m].materialIndex = 1; // material - map
 
@@ -416,7 +416,7 @@ function init() {
 
                 // apply materials on right faces
                 result.materials = [TXTMaterial[cylcount], TZAMaterial[Math.floor(Math.random() * 4)]];
-                for (m = 0; m < result.faces.length; m++) {
+                for (let m = 0; m < result.faces.length; m++) {
                     if (m < result.faces.length - 220) {
                         result.faces[m].materialIndex = 1; // material - map
 
@@ -451,7 +451,7 @@ function init() {
 
 
             // Create small points on objects original pos
-            let tmpPoint = new THREE.CylinderGeometry(20, 20, 20, 4);
+            let tmpPoint = new THREE.CylinderGeometry(10, 10, 20, 4);
             pointsArr[j] = new THREE.Mesh(tmpPoint);
             pointsArr[j].position.x = PosArr[j][0];
             pointsArr[j].position.y = 100 - PosArr[j][1];
@@ -474,13 +474,13 @@ function init() {
 }
 
 
-isAnimationOn = true;
+var isAnimationOn = true;
 
 
 function EnterAnimation() {
 
     // do fade in
-    for (j = 0; j < BoxesNumber; j++) {
+    for (let j = 0; j < BoxesNumber; j++) {
 
         new TWEEN.Tween(meshArr[j].position).to({
             z: PosArr[j][2]
@@ -493,7 +493,7 @@ function exitAnimation() {
     if (isAnimationOn) {
         if (isMobile) {
 
-            for (j = 0; j < BoxesNumber; j++) {
+            for (let j = 0; j < BoxesNumber; j++) {
                 scene.remove(meshArr[j]);
 
             }
@@ -501,7 +501,7 @@ function exitAnimation() {
 
         } else {
 
-            for (j = 0; j < BoxesNumber; j++) {
+            for (let j = 0; j < BoxesNumber; j++) {
                 new TWEEN.Tween(meshArr[j].position).to({
                     z: -300
                 }, 2000 + Math.random() * 4000)
@@ -646,7 +646,7 @@ function onDocumentMouseMove(event) {
             var distance = -camera.position.z / dir.z;
             var MousePos = camera.position.clone().add(dir.multiplyScalar(distance));
 
-            for (j = 0; j < BoxesNumber; j++) {
+            for (let j = 0; j < BoxesNumber; j++) {
 
                 // getting the ovject position into an object
                 let tmpObjPso = new THREE.Vector3();
@@ -744,7 +744,7 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (!isMobile) {
-        for (j = 0; j < BoxesNumber; j++) {
+        for (let j = 0; j < BoxesNumber; j++) {
             if (j % 2) { // continuous rotation for Y-Z 
                 meshArr[j].rotation.y += (0.05 * (Math.PI / 180));
                 meshArr[j].rotation.z += (0.05 * 1.2 * (Math.PI / 180));
