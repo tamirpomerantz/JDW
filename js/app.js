@@ -253,15 +253,12 @@ function init() {
             meshArr[j].rotation.y = Math.floor((Math.random() * (6))) * (Math.PI / 180); // small <10 distortions in y rotation
             if (j == 2)
                 meshArr[j].rotation.x = -6 * (Math.PI / 180);
-
-
-
             scene.add(meshArr[j]);
-            if (true) { // TODO: check if device orientation 
-                // camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 200, 1000);
-                controls = new THREE.DeviceOrientationControls(scene);
+                        camera.position.set(0, 0, 600);
 
-            }
+            controls = new THREE.DeviceOrientationControls(scene);
+
+            
         }
 
 

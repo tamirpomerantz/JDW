@@ -33,7 +33,7 @@
             z-index: 10;
         }
 
-        .border {
+        /*.border {
             position: fixed;
             border: 70px solid #fff;
             top: 0px;
@@ -42,7 +42,7 @@
             height: 100%;
             box-sizing: border-box;
             z-index: 100;
-        }
+        }*/
 
         .float {
             position: fixed;
@@ -50,11 +50,14 @@
             font-family: 'Simpler';
             top: 0px;
             left: 0px;
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width:100%;
             align-items: center;
             justify-content: center;
             z-index: 1;
+        }
+        .float img {
+            max-width: calc(100% - 200px);
         }
 
         .preloader {
@@ -75,9 +78,17 @@
         }
 
         @media (max-width: 600px) {
-            .border {
+            /*.border {
                 display: none;
-            }
+            }*/
+
+            .float img {
+            max-width: calc(80%);
+        }
+         .app {
+            top:0px;
+            left:0px;
+        }
         }
         /*preloader*/
 
